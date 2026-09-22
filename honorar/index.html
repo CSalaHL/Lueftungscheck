@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Honorarcheck Lüftung/Klima – BIM Werk</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="../icons/favicon-32.png">
+<meta name="theme-color" content="#383633">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..750&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ECEFEE; --panel:#FFFFFF; --panel2:#F6F8F7; --ink:#16202A; --muted:#55626D; --line:#C8D0D5;
+  --ok:#1D7446; --warn:#9A6200; --bad:#B3261E; --zul:#2360A3; --abl:#C49A1E; --brand:#383633; --chip:#E3E8EA;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#11171C;--panel:#192128;--panel2:#1F2830;--ink:#E4EAEE;--muted:#9BA8B2;--line:#2F3B45;
+    --ok:#4FC38B;--warn:#E2A73C;--bad:#F2766C;--zul:#72A9E8;--abl:#E3BF4A;--brand:#E6E3DE;--chip:#26313A}
+}
+:root[data-theme="dark"]{--bg:#11171C;--panel:#192128;--panel2:#1F2830;--ink:#E4EAEE;--muted:#9BA8B2;--line:#2F3B45;
+  --ok:#4FC38B;--warn:#E2A73C;--bad:#F2766C;--zul:#72A9E8;--abl:#E3BF4A;--brand:#E6E3DE;--chip:#26313A}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;font-variant-numeric:tabular-nums}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--zul);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+header.top{padding:24px 0 14px}
+.home{display:inline-block;margin-bottom:14px;color:var(--zul);font-weight:600;text-decoration:none;font-size:.92rem}
+.home::before{content:"‹ "}
+.duct{display:flex;gap:6px;margin-bottom:16px;max-width:520px}
+.duct span{height:6px;flex:1;border-radius:3px;background:var(--abl)}
+.duct span:nth-child(2){background:var(--zul)}.duct span:nth-child(3){background:var(--brand);opacity:.5}
+h1{font-stretch:118%;font-weight:720;font-size:clamp(1.6rem,3.4vw,2.4rem);line-height:1.08;margin:0 0 6px}
+.lead{color:var(--muted);margin:0;max-width:72ch}
+.fachstand{margin:8px 0 0;font-size:.88rem;color:var(--muted)}.fachstand b{color:var(--ink)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{border:1px solid var(--line);background:var(--panel);padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:560;font-size:.93rem}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--zul);border-color:var(--zul);color:#fff}
+.btn.small{padding:4px 10px;font-size:.84rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.notice{border:1px solid var(--line);border-left:5px solid var(--warn);background:var(--panel);border-radius:8px;padding:10px 14px;font-size:.88rem;color:var(--muted);margin:10px 0 0;max-width:110ch}
+.notice b{color:var(--ink)}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start;padding:18px 0 40px}
+@media (max-width:980px){.grid{grid-template-columns:1fr}}
+.grid>*{min-width:0}
+@media (max-width:640px){.wrap{padding:0 12px}.body{padding:8px 14px 16px}.card>h2{padding:14px 14px 2px}.card>.sub{padding:0 14px 8px}.mixtab td:nth-child(2){font-size:.8rem}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:16px}
+.card>h2{margin:0;padding:16px 20px 2px;font-size:1.15rem;font-stretch:110%;font-weight:680;display:flex;gap:10px;align-items:baseline}
+.card>h2 .no{color:var(--zul);font-weight:700}
+.card>.sub{margin:0;padding:0 20px 8px;color:var(--muted);font-size:.88rem}
+.body{padding:8px 20px 18px}
+.row{display:flex;flex-wrap:wrap;gap:14px 18px;align-items:flex-end;margin-bottom:12px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label,.lbl{font-weight:600;font-size:.88rem}
+.field small{color:var(--muted);font-size:.8rem}
+input[type=text],input[type=number],select{padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);min-width:0}
+input[type=number]{text-align:right}
+.w-name{width:min(420px,100%)}.w-bw{width:min(460px,100%)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{border:0;background:var(--panel2);padding:7px 13px;cursor:pointer;font-size:.9rem}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--zul);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--panel2);padding:3px 10px;border-radius:14px;cursor:pointer;font-size:.82rem}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{border-color:var(--zul);color:var(--zul);font-weight:650}
+.tag{display:inline-block;font-size:.72rem;font-weight:650;padding:1px 7px;border-radius:4px;border:1.5px solid currentColor;white-space:nowrap;vertical-align:middle}
+.tag.ver{color:var(--ok)}.tag.ann{color:var(--warn);border-style:dashed}
+.kat{display:inline-block;min-width:40px;text-align:center;font-weight:700;font-stretch:115%;padding:2px 8px;border-radius:4px;background:var(--chip)}
+.hint{font-size:.83rem;color:var(--muted);margin:6px 0 0;max-width:80ch}
+.warnbox{border:1px dashed var(--warn);border-radius:8px;padding:8px 12px;font-size:.84rem;color:var(--muted);margin:0 0 12px}
+.warnbox b{color:var(--warn)}
+
+/* tables */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{background:var(--panel2);font-size:.8rem;font-weight:650;color:var(--muted);white-space:nowrap}
+td.num,th.num{text-align:right}
+tfoot td{font-weight:700;border-bottom:0}
+table input,table select{width:100%}
+.costs{min-width:760px}
+.costs .c-ebf{width:95px}.costs .c-kw{width:95px}.costs .c-st{width:110px}
+.del{border:0;background:none;color:var(--muted);cursor:pointer;font-size:1.1rem;padding:2px 6px}
+.del:hover{color:var(--bad)}
+.manual{border-color:var(--zul)!important;box-shadow:inset 0 0 0 1px var(--zul)}
+
+/* factors */
+.fac{display:grid;grid-template-columns:150px minmax(0,1fr) 84px;gap:6px 14px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.fac:first-child{border-top:0}
+.fac .fn{font-weight:650}
+.fac .fn small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
+.fac input[type=range]{width:100%;accent-color:var(--zul)}
+.fac .extra{grid-column:2 / 4}
+@media (max-width:640px){.fac{grid-template-columns:1fr 84px}.fac .fn{grid-column:1 / 3}.fac .extra{grid-column:1 / 3}}
+
+/* phases */
+.ph{display:grid;grid-template-columns:28px 44px minmax(0,1fr) 80px;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line);font-size:.93rem}
+.ph:first-child{border-top:0}
+.ph .pid{color:var(--muted);font-weight:650}
+.ph input[type=checkbox]{width:18px;height:18px;accent-color:var(--zul)}
+.qsum{display:flex;justify-content:space-between;padding-top:10px;border-top:2px solid var(--ink);font-weight:700;margin-top:4px}
+
+/* result */
+aside .card{position:sticky;top:calc(12px + env(safe-area-inset-top,0px))}
+.res{padding:16px 18px 18px}
+.res h2{margin:0 0 10px;font-size:1.05rem;font-stretch:110%}
+.big{font-size:2rem;font-weight:720;font-stretch:112%;line-height:1.1;margin:2px 0}
+.bigl{color:var(--muted);font-size:.82rem}
+.kv{display:grid;grid-template-columns:1fr auto;gap:3px 12px;font-size:.9rem;margin:12px 0 0}
+.kv dt{color:var(--muted)}.kv dd{margin:0;text-align:right;font-weight:600}
+.kv .sep{grid-column:1 / 3;border-top:1px solid var(--line);margin:5px 0}
+.kv .tot dt,.kv .tot dd{color:var(--ink);font-weight:750}
+.bar{display:flex;height:12px;border-radius:3px;overflow:hidden;margin:14px 0 4px;background:var(--chip)}
+.bar span{display:block;height:100%}
+.legendp{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:.74rem;color:var(--muted)}
+.legendp i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.warns{margin:12px 0 0;padding:0;list-style:none;font-size:.82rem}
+.warns li{padding:6px 9px;border-left:3px solid var(--warn);background:var(--panel2);margin-bottom:5px;border-radius:0 4px 4px 0}
+.warns li.bad{border-left-color:var(--bad)}
+details{border-top:1px solid var(--line)}
+details summary{cursor:pointer;padding:12px 20px;font-weight:650}
+details .body{padding-top:0}
+.formula{font-size:.9rem;line-height:1.8}
+.formula code{background:var(--panel2);padding:1px 6px;border-radius:4px;font-family:inherit;font-weight:600}
+.mobilebar{display:none}
+@media (max-width:980px){
+  .mobilebar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:10;justify-content:space-between;align-items:center;gap:10px;
+    background:var(--brand);color:#fff;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+  :root[data-theme="dark"] .mobilebar{color:#16202A}
+  .mobilebar b{font-size:1.15rem;font-stretch:112%}
+  .mobilebar a{color:inherit;font-size:.85rem}
+  body{padding-bottom:70px}
+  body .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));max-width:90vw;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:8px;font-size:.9rem;z-index:20}
+.printhead,.printonly{display:none}
+
+@page{size:A4 portrait;margin:15mm 14mm 17mm 14mm;
+  @bottom-left{content:"BIM Werk – Honorarcheck Lüftung/Klima";font:7.5pt Archivo,Helvetica,Arial,sans-serif;color:#666}
+  @bottom-right{content:"Seite " counter(page) " / " counter(pages);font:7.5pt Archivo,Helvetica,Arial,sans-serif;color:#666}}
+@media print{
+  :root:root:root{--bg:#fff;--panel:#fff;--panel2:#F3F5F5;--ink:#1A1A1A;--muted:#555;--line:#BFC6CA;--ok:#1D7446;--warn:#9A6200;--bad:#B3261E;--zul:#2360A3;--chip:#E6E9EA}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{background:#fff;font-size:9.5pt;line-height:1.4;padding:0}
+  header.top,.toolbar,.mobilebar,.noprint,.toast,.notice{display:none!important}
+  .printhead{display:flex;justify-content:space-between;align-items:flex-end;gap:10mm;padding-bottom:3mm;margin-bottom:4mm;border-bottom:1.5pt solid #383633}
+  .printhead img{height:15mm}
+  .printhead .pt{text-align:right;font-size:9pt;color:#383633}
+  .printhead .pt b{display:block;font-size:13pt;color:#1A1A1A}
+  .printonly{display:block}
+  .wrap{max-width:none;padding:0}
+  .grid{display:block;padding:0}
+  aside{display:none}
+  .card{border:0;border-radius:0;margin:0 0 3mm;break-inside:avoid}
+  .card>h2{padding:2mm 0 1mm;font-size:11pt;border-bottom:1pt solid var(--line)}
+  .card>.sub{padding:0 0 1mm;font-size:8pt}
+  .body{padding:1.5mm 0 2mm}
+  input,select{border:0!important;background:none!important;padding:0!important;box-shadow:none!important;-webkit-appearance:none;appearance:none;font-size:9pt}
+  input[type=range],.chips,.seg,.del,.btn,.addrow{display:none!important}
+  .costs{min-width:0}
+  table{font-size:8.5pt}th,td{padding:1.2mm 2mm}
+  .fac{grid-template-columns:40mm 1fr 20mm;padding:1.5mm 0}
+  .fac .extra{display:none}
+  details{border:0}details summary{display:none}
+  details>.body{display:block}
+  .tw{border:0;overflow:visible}
+  .ph{padding:.8mm 0}
+  input[type=text]::placeholder{color:transparent}
+  td.num{white-space:nowrap}
+  #psum .card{border:1pt solid #383633;padding:0 3mm 1mm}
+  #psum h2{border-bottom:0}
+  #psum td{font-size:9pt}
+}
+</style>
+</head>
+<body>
+<header class="top wrap">
+  <a class="home" href="../">Alle Tools</a>
+  <div class="duct" aria-hidden="true"><span></span><span></span><span></span></div>
+  <h1>Honorarcheck Lüftung/Klima</h1>
+  <p class="lead">Anlagekosten grob schätzen und das Planerhonorar nach dem Baukostenmodell der SIA-Kalkulationshilfe 108-K berechnen. Alle Werte sind vorbelegt und lassen sich anpassen.</p>
+  <p class="fachstand">Fachstand des Tools: <b id="fs"></b></p>
+  <div class="toolbar">
+    <button class="btn" id="impSA" type="button">Aus Schnellauslegung übernehmen</button>
+    <button class="btn" id="impQC" type="button">Aus Lüftungs-Quickcheck übernehmen</button>
+    <button class="btn" id="btnPrint" type="button">Bericht drucken / als PDF speichern</button>
+    <button class="btn" id="btnReset" type="button">Neu beginnen</button>
+  </div>
+  <p class="notice"><b>Zum Honorarmodell:</b> Die Berechnung nach aufwandbestimmenden Baukosten stammt aus der SIA-Kalkulationshilfe 108-K (2018) zur SIA 108:2014. Die KBOB bezeichnet es 2026 als Modell «bis 2019»; der SIA entwickelt ein neues Modell. In der Praxis wird es weiterhin zur Herleitung und Prüfung von Honoraren verwendet. Die Anwendung ist projektspezifisch zu vereinbaren.</p>
+</header>
+
+<main class="wrap">
+  <div class="printhead"><img src="../assets/logo-dark.png" alt="BIM Werk"><div class="pt"><b>Honorarcheck Lüftung/Klima</b><span id="phName"></span></div></div>
+  <div id="psum" class="printonly"></div>
+  <div class="grid">
+    <div id="main"></div>
+    <aside><div class="card"><div class="res" id="res"></div></div></aside>
+  </div>
+  <section id="below"></section>
+</main>
+<div class="mobilebar" id="mbar"></div>
+
+<script src="daten.js"></script>
+<script>
+(function(){
+"use strict";
+const D = window.HONORAR_DATEN;
+const KEY = "bimwerk.honorar.v1", HANDOFF = "bimwerk.handoff.v1", QCKEY = "lk-quickcheck-v1";
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const chf = v => "CHF " + Math.round(v).toLocaleString("de-CH");
+const num = (v, d=0) => Number(v).toLocaleString("de-CH",{minimumFractionDigits:d,maximumFractionDigits:d});
+const PCOL = ["#2360A3","#4F86C6","#C49A1E","#3C8B40","#6FA36F","#8A5A2B"];
+
+/* ---------- Zustand ---------- */
+function defaults(){
+  const ph = {}; D.phasen.forEach(p => ph[p.id] = {on:true, q:p.q});
+  return {
+    name:"", bw:6, art:"neubau",
+    kmodus:"flaeche", rows:[{bez:"", nutz:"verwaltung", ebf:"", stufe:"typ", kw:null}], zuschlag:0, reserve:0, direkt:"",
+    ph, qEdit:false,
+    n:1.0, nManual:false, r:1.0, U:1.0, i:1.0, s:1.0,
+    hmodus:"mittel", h:138.6, rates:Object.fromEntries(D.kategorien.map(k=>[k.k,k.h])), mix:{...D.teamMix},
+    zusatz:[], nk:D.nebenkosten.standard, mwst:D.mwst
+  };
+}
+let S;
+try { S = Object.assign(defaults(), JSON.parse(localStorage.getItem(KEY)||"{}")); } catch(e){ S = defaults(); }
+const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
+
+/* ---------- Berechnung ---------- */
+function kwOf(r, stufe){ const k = D.kennwerte[r.nutz]; return k ? k[stufe] : 0; }
+function hEff(){
+  if(S.hmodus==="mittel") return +S.h||0;
+  let a=0,b=0; D.kategorien.forEach(k=>{ const sh=+S.mix[k.k]||0; a+=sh*(+S.rates[k.k]||0); b+=sh; });
+  return b ? a/b : 0;
+}
+function mixSum(){ return D.kategorien.reduce((t,k)=>t+(+S.mix[k.k]||0),0); }
+function costs(){
+  let t=0,mi=0,ma=0; const lines=[];
+  S.rows.forEach(r=>{
+    const e=+r.ebf||0, man=r.kw!==null&&r.kw!=="";
+    const kt=man?+r.kw:kwOf(r,r.stufe), kmi=man?+r.kw:kwOf(r,"min"), kma=man?+r.kw:kwOf(r,"max");
+    lines.push({kw:kt, sum:e*kt}); t+=e*kt; mi+=e*kmi; ma+=e*kma;
+  });
+  const f=(1+(+S.zuschlag||0)/100)*(1+(+S.reserve||0)/100);
+  return {lines, typ:t*f, min:mi*f, max:ma*f, f};
+}
+function pOf(B){ return B>0 ? D.zwerte.z1 + D.zwerte.z2/Math.cbrt(B) : 0; }
+function honorar(B){
+  const p=pOf(B), q=D.phasen.reduce((t,ph)=>t+(S.ph[ph.id]?.on?(+S.ph[ph.id].q||0):0),0);
+  const Tm=B*p/100*S.n*q/100*S.r*S.U, Tp=Tm*S.i, h=hEff(), H=Tp*S.s*h;
+  return {B,p,q,Tm,Tp,h,H};
+}
+function calc(){
+  const c=costs();
+  const B = S.kmodus==="direkt" ? (+S.direkt||0) : c.typ;
+  const Bmin = S.kmodus==="direkt" ? B : c.min, Bmax = S.kmodus==="direkt" ? B : c.max;
+  const main=honorar(B), lo=honorar(Bmin), hi=honorar(Bmax);
+  const phases=D.phasen.map(ph=>{const on=S.ph[ph.id]?.on, qp=on?(+S.ph[ph.id].q||0):0;
+    const Tp=B*main.p/100*S.n*qp/100*S.r*S.U*S.i; return {...ph,on,qp,Tp,H:Tp*S.s*main.h};});
+  const zus=S.zusatz.map(z=>({...z, hh:(z.h!==null&&z.h!=="")?+z.h:main.h, sum:(+z.std||0)*((z.h!==null&&z.h!=="")?+z.h:main.h)}));
+  const Z=zus.reduce((t,z)=>t+z.sum,0);
+  const NK=(main.H+Z)*(+S.nk||0)/100, net=main.H+Z+NK, mw=net*(+S.mwst||0)/100;
+  const warns=[];
+  if(B>0 && B<D.mindestBaukosten.wert) warns.push({c:"bad",t:"Baukosten unter CHF 100'000: SIA 108-K empfiehlt hier die Honorierung nach Zeitaufwand (Art. 7.1.5 bzw. 6.2.1)."});
+  if(!B) warns.push({c:"bad",t:"Baukosten fehlen – Flächen erfassen oder Betrag eingeben."});
+  if(S.n<D.faktoren.n.min||S.n>D.faktoren.n.max) warns.push({t:"Schwierigkeitsgrad n ausserhalb der KOF-Bandbreite 0.6–1.5."});
+  if(S.r<D.faktoren.r.min||S.r>D.faktoren.r.max) warns.push({t:"Anpassungsfaktor r ausserhalb der KOF-Bandbreite 0.75–1.2."});
+  if(S.hmodus==="mix" && Math.abs(mixSum()-100)>0.01) warns.push({t:"Team-Mix ergibt "+num(mixSum())+" % statt 100 % – der Ansatz wird gewichtet gemittelt."});
+  if(S.kmodus==="flaeche" && S.rows.some(r=>(r.kw===null||r.kw==="")&&+r.ebf>0)) warns.push({t:"Kostenkennwerte sind Annahmen des Tools. Für belastbare Zahlen eigene Kennwerte oder eine Kostenschätzung verwenden."});
+  if(main.q<100 && main.q>0) warns.push({t:"Teilleistungen "+num(main.q,1)+" % – nicht alle Phasen beauftragt."});
+  return {c,B,Bmin,Bmax,main,lo,hi,phases,zus,Z,NK,net,mw,gross:net+mw,warns};
+}
+
+/* ---------- Rendering Eingaben ---------- */
+const bwOpt = () => {
+  const groups=[...new Set(D.bauwerksarten.map(b=>b.g))];
+  return groups.map(g=>`<optgroup label="${esc(g)}">${D.bauwerksarten.map((b,i)=>b.g===g?`<option value="${i}" ${+S.bw===i?"selected":""}>${esc(b.l)} (Kat. ${b.k})</option>`:"").join("")}</optgroup>`).join("");
+};
+const nutzOpt = v => Object.entries(D.kennwerte).map(([k,o])=>`<option value="${k}" ${v===k?"selected":""}>${esc(o.l)}</option>`).join("");
+function slider(id, f, extra=""){
+  const F=D.faktoren[id], step=0.01;
+  return `<div class="fac"><div class="fn">${f}</div>
+    <input type="range" min="${F.min}" max="${F.max}" step="${step}" value="${S[id]}" data-f="${id}" aria-label="${id}">
+    <input type="number" min="0" step="0.01" value="${S[id]}" data-f="${id}" aria-label="${id} Wert">
+    <div class="extra">${extra}<p class="hint">${esc(F.hinweis)}</p></div></div>`;
+}
+function renderMain(){
+  const bw=D.bauwerksarten[+S.bw]||D.bauwerksarten[0];
+  const nSug=D.nVorschlag[bw.k];
+  const cc=costs();
+  let h="";
+  /* 1 Projekt */
+  h+=`<section class="card"><h2><span class="no">1</span>Projekt</h2><div class="body">
+    <div class="row"><div class="field"><label for="f_name">Projektbezeichnung</label><input type="text" id="f_name" class="w-name" data-s="name" value="${esc(S.name)}"></div>
+      <div class="field"><span class="lbl">Vorhaben</span><div class="seg" role="group">
+        <button type="button" data-set="art" data-v="neubau" aria-pressed="${S.art==="neubau"}">Neubau</button>
+        <button type="button" data-set="art" data-v="umbau" aria-pressed="${S.art==="umbau"}">Umbau / Erneuerung</button></div><span class="printonly">${S.art==="neubau"?"Neubau":"Umbau / Erneuerung"}</span></div></div>
+    <div class="row"><div class="field"><label for="f_bw">Bauwerksart</label><select id="f_bw" class="w-bw" data-s="bw">${bwOpt()}</select>
+      <small>Schwierigkeitskategorie Lüftung/Klima gemäss SIA 108-K Art. 7.6.5: <span class="kat">${bw.k}</span> <span class="tag ver">verifiziert</span></small></div></div>
+    ${S.art==="umbau"?`<p class="hint">Umbau: Faktor U (Erschwernis) und Anpassungsfaktor r unter Punkt 4 projektspezifisch festlegen. Vorschläge der Stadt Zürich für Erneuerungen sind dort hinterlegt.</p>`:""}
+  </div></section>`;
+
+  /* 2 Baukosten */
+  h+=`<section class="card"><h2><span class="no">2</span>Baukosten Lüftung/Klima</h2><p class="sub">Aufwandbestimmende Baukosten (BKP 244/245) exkl. MWST.</p><div class="body">
+    <div class="row noprint"><div class="seg" role="group">
+      <button type="button" data-set="kmodus" data-v="flaeche" aria-pressed="${S.kmodus==="flaeche"}">Grobschätzung über Flächen</button>
+      <button type="button" data-set="kmodus" data-v="direkt" aria-pressed="${S.kmodus==="direkt"}">Baukosten bekannt</button></div></div>`;
+  if(S.kmodus==="direkt"){
+    h+=`<div class="row"><div class="field"><label for="f_dir">Aufwandbestimmende Baukosten Lüftung/Klima (CHF exkl. MWST)</label>
+      <input type="number" id="f_dir" data-s="direkt" value="${esc(S.direkt)}" min="0" step="1000" style="width:220px"><small>z. B. aus Kostenschätzung oder Kostenvoranschlag</small></div></div>`;
+  } else {
+    h+=`<p class="warnbox"><b>Annahme:</b> Die Kennwerte in CHF/m² EBF sind Platzhalter des Tools und nicht verifiziert. Durch eigene Nachkalkulationen ersetzen – direkt in der Tabelle oder dauerhaft in <code>honorar/daten.js</code>.</p>
+    <div class="tw"><table class="costs"><thead><tr><th>Bezeichnung</th><th>Nutzung / Anlagetyp</th><th class="num">EBF m²</th><th>Ausbau</th><th class="num">CHF/m²</th><th class="num">Kosten</th><th class="noprint"></th></tr></thead><tbody>
+    ${S.rows.map((r,i)=>{const man=r.kw!==null&&r.kw!=="";
+      return `<tr><td><input type="text" data-row="${i}" data-k="bez" value="${esc(r.bez)}" placeholder="z. B. Büro 1.–3. OG"></td>
+      <td><select data-row="${i}" data-k="nutz">${nutzOpt(r.nutz)}</select></td>
+      <td class="c-ebf"><input type="number" min="0" step="10" data-row="${i}" data-k="ebf" value="${esc(r.ebf)}"></td>
+      <td class="c-st"><select data-row="${i}" data-k="stufe" ${man?"disabled":""}><option value="min" ${r.stufe==="min"?"selected":""}>einfach</option><option value="typ" ${r.stufe==="typ"?"selected":""}>typisch</option><option value="max" ${r.stufe==="max"?"selected":""}>hoch</option></select></td>
+      <td class="c-kw"><input type="number" min="0" step="5" data-row="${i}" data-k="kw" class="${man?"manual":""}" value="${man?esc(r.kw):""}" placeholder="${num(kwOf(r,r.stufe))}" title="${man?"Eigener Kennwert – leeren für Vorschlag":"Vorschlag – überschreiben für eigenen Kennwert"}"></td>
+      <td class="num">${chf(cc.lines[i].sum)}</td>
+      <td class="noprint">${S.rows.length>1?`<button class="del" type="button" data-delrow="${i}" aria-label="Zeile löschen">×</button>`:""}</td></tr>`;}).join("")}
+    </tbody><tfoot><tr><td colspan="5">Summe Nutzungen${cc.f!==1?` inkl. Zuschläge (×${num(cc.f,3)})`:""}</td><td class="num">${chf(cc.typ)}</td><td class="noprint"></td></tr></tfoot></table></div>
+    <div class="row" style="margin-top:10px"><button class="btn small addrow" type="button" id="addRow">Nutzung hinzufügen</button></div>
+    <div class="row"><div class="field"><label for="f_zu">Zuschlag Umbau/Erschwernis %</label><input type="number" id="f_zu" data-s="zuschlag" value="${S.zuschlag}" step="1" style="width:110px"></div>
+      <div class="field"><label for="f_re">Reserve / Unvorhergesehenes %</label><input type="number" id="f_re" data-s="reserve" value="${S.reserve}" step="1" style="width:110px"></div>
+      <div class="field"><span class="lbl">Bandbreite</span><span>${chf(cc.min)} – ${chf(cc.max)}</span><small>aus Kennwerten einfach / hoch</small></div></div>`;
+  }
+  h+=`</div></section>`;
+
+  /* 3 Leistungsumfang */
+  const qsum=D.phasen.reduce((t,p)=>t+(S.ph[p.id]?.on?(+S.ph[p.id].q||0):0),0);
+  h+=`<section class="card"><h2><span class="no">3</span>Leistungsumfang</h2><p class="sub">Teilphasen mit Leistungsanteil q Lüftung/Klima gemäss SIA 108-K Art. 7.7.3 <span class="tag ver">verifiziert</span></p><div class="body">
+    ${D.phasen.map(p=>`<div class="ph"><input type="checkbox" id="ph_${p.id}" data-ph="${p.id}" ${S.ph[p.id]?.on?"checked":""}><span class="pid">${p.id}</span><label for="ph_${p.id}">${esc(p.name)}</label>
+      ${S.qEdit?`<input type="number" step="0.5" min="0" data-phq="${p.id}" value="${S.ph[p.id].q}">`:`<span style="text-align:right">${num(S.ph[p.id].q,1)} %</span>`}</div>`).join("")}
+    <div class="qsum"><span>Leistungsanteil q</span><span>${num(qsum,1)} %</span></div>
+    <div class="row noprint" style="margin-top:10px"><button class="btn small" type="button" data-toggle="qEdit">${S.qEdit?"Prozentwerte fixieren":"Prozentwerte anpassen"}</button>
+      ${S.qEdit?`<button class="btn small" type="button" id="qReset">SIA-Werte wiederherstellen</button>`:""}</div>
+    <p class="hint">Phasen 1, 2 und 6 sind keine Grundleistungen im Baukostenmodell und werden unter Punkt 6 als Zusatzleistungen erfasst (SIA 108-K Art. 7.7.5).</p>
+  </div></section>`;
+
+  /* 4 Faktoren */
+  const nExtra=`<div class="chips">${[0.8,0.9,1.0,1.1,1.2,1.3].map(v=>`<button type="button" class="chip" data-fset="n" data-v="${v}" aria-pressed="${Math.abs(S.n-v)<0.001}">${num(v,1)}</button>`).join("")}
+    <button type="button" class="chip" data-nsug="1">Vorschlag Kat. ${bw.k}: ${num(nSug,2)}</button></div>
+    <p class="hint">${S.nManual?"Manuell gesetzt.":"Aus Kategorie abgeleitet."} Der Vorschlag je Kategorie ist eine <span class="tag ann">Annahme</span> des Tools – der SIA publiziert seit 2018 keine Zahlenwerte für n.</p>`;
+  const rExtra=`<div class="chips">${D.rVorschlaege.map(o=>`<button type="button" class="chip" data-fset="r" data-v="${o.r}" aria-pressed="${Math.abs(S.r-o.r)<0.001}">${esc(o.l)} ${num(o.r,2)}</button>`).join("")}</div>
+    <p class="hint">Vorschläge für Erneuerungen gemäss Merkblatt Stadt Zürich 2025-01.</p>`;
+  h+=`<section class="card"><h2><span class="no">4</span>Faktoren</h2><p class="sub">Standard ist jeweils 1.0. Anpassungen projektspezifisch begründen und vereinbaren.</p><div class="body">
+    ${slider("n",`Schwierigkeitsgrad n<small>Aufgabe, Fachkenntnisse, Verantwortung</small>`,nExtra)}
+    ${slider("r",`Anpassungsfaktor r<small>lokale, organisatorische Einflüsse</small>`,rExtra)}
+    ${slider("U",`Umbaufaktor U<small>Erschwernis bei Umbauten</small>`)}
+    ${slider("i",`Teamfaktor i<small>teamspezifische Abweichung</small>`)}
+    ${slider("s",`Sonderleistungen s<small>besondere Kenntnisse, Verantwortung</small>`)}
+  </div></section>`;
+
+  /* 5 Stundenansatz */
+  h+=`<section class="card"><h2><span class="no">5</span>Stundenansatz</h2><p class="sub">Angebotener Stundenansatz h in CHF exkl. MWST.</p><div class="body">
+    <div class="row noprint"><div class="seg" role="group">
+      <button type="button" data-set="hmodus" data-v="mittel" aria-pressed="${S.hmodus==="mittel"}">Mittlerer Ansatz</button>
+      <button type="button" data-set="hmodus" data-v="mix" aria-pressed="${S.hmodus==="mix"}">Aus Team-Mix</button></div></div>`;
+  if(S.hmodus==="mittel"){
+    h+=`<div class="row"><div class="field"><label for="f_h">Stundenansatz CHF/h</label><input type="number" id="f_h" data-s="h" value="${S.h}" step="0.5" style="width:130px"></div>
+      <div class="field noprint"><span class="lbl">Referenzen</span><div class="chips">${D.mittelansaetze.map(m=>`<button type="button" class="chip" data-hset="${m.h}" aria-pressed="${Math.abs(S.h-m.h)<0.001}">${esc(m.l)}: ${num(m.h,2)}</button>`).join("")}</div></div></div>
+      <p class="hint">Stadt Zürich: Ansatz für das Baukostenmodell 2025, jährlich nach SIA 126 angepasst (Basis 2018: CHF 132). Thurgau: Maximalansatz für freihändige Vergaben 2026. Die KBOB publiziert 2026 keine Ansätze mehr – verhandeln.</p>`;
+  } else {
+    h+=`<div class="tw"><table class="mixtab"><thead><tr><th>Kat.</th><th>Funktion</th><th class="num">CHF/h</th><th class="num">Anteil %</th></tr></thead><tbody>
+      ${D.kategorien.map(k=>`<tr><td><b>${k.k}</b></td><td>${esc(k.l)}</td><td class="num" style="width:110px"><input type="number" step="1" data-rate="${k.k}" value="${S.rates[k.k]}"></td><td class="num" style="width:100px"><input type="number" step="5" min="0" data-mix="${k.k}" value="${S.mix[k.k]}"></td></tr>`).join("")}
+      </tbody><tfoot><tr><td colspan="2">Gewichteter Ansatz</td><td class="num" id="mixH">${num(hEff(),2)}</td><td class="num" id="mixSum" style="color:${Math.abs(mixSum()-100)>0.01?"var(--warn)":"inherit"}">${num(mixSum())} %</td></tr></tfoot></table></div>
+      <p class="hint">Ansätze vorbelegt mit den Maximalansätzen Kanton Thurgau 2026 <span class="tag ver">verifiziert</span>. Der Team-Mix ist eine <span class="tag ann">Annahme</span> – an die eigene Projektorganisation anpassen.</p>`;
+  }
+  h+=`</div></section>`;
+
+  /* 6 Zusatzleistungen, Nebenkosten */
+  h+=`<section class="card"><h2><span class="no">6</span>Zusatzleistungen und Nebenkosten</h2><p class="sub">Besonders zu vereinbarende Leistungen nach Zeitaufwand.</p><div class="body">
+    ${S.zusatz.length?`<div class="tw"><table><thead><tr><th>Leistung</th><th class="num">Stunden</th><th class="num">CHF/h</th><th class="num">Honorar</th><th class="noprint"></th></tr></thead><tbody>
+      ${S.zusatz.map((z,i)=>`<tr><td><input type="text" data-z="${i}" data-k="bez" value="${esc(z.bez)}"></td>
+        <td class="num" style="width:100px"><input type="number" min="0" step="1" data-z="${i}" data-k="std" value="${esc(z.std)}"></td>
+        <td class="num" style="width:110px"><input type="number" min="0" step="1" data-z="${i}" data-k="h" value="${z.h===null?"":esc(z.h)}" placeholder="${num(hEff(),0)}"></td>
+        <td class="num" data-zsum="${i}"></td><td class="noprint"><button class="del" type="button" data-delz="${i}" aria-label="Zeile löschen">×</button></td></tr>`).join("")}
+      </tbody></table></div>`:`<p class="hint" style="margin:0 0 8px">Keine Zusatzleistungen erfasst.</p>`}
+    <div class="row noprint" style="margin-top:10px"><div class="chips">${D.zusatzVorlagen.map(v=>`<button type="button" class="chip" data-zadd="${esc(v)}">+ ${esc(v)}</button>`).join("")}<button type="button" class="chip" data-zadd="">+ Eigene Leistung</button></div></div>
+    <div class="row"><div class="field"><label for="f_nk">Nebenkosten % des Honorars</label><input type="number" id="f_nk" data-s="nk" value="${S.nk}" step="0.5" style="width:110px"></div>
+      <div class="field"><label for="f_mw">MWST %</label><input type="number" id="f_mw" data-s="mwst" value="${S.mwst}" step="0.1" style="width:100px"></div></div>
+    <p class="hint">${esc(D.nebenkosten.hinweis)}</p>
+  </div></section>`;
+  $("#main").innerHTML=h;
+}
+
+/* ---------- Rendering Resultat ---------- */
+function renderResult(){
+  const R=calc(), m=R.main;
+  const pct = R.B ? R.net/R.B*100 : 0;
+  $("#res").innerHTML=`<h2>Ergebnis</h2>
+    <div class="bigl">Honorar total exkl. MWST</div><div class="big">${chf(R.net)}</div>
+    <div class="bigl">inkl. MWST ${chf(R.gross)}${R.Bmin!==R.Bmax?` · Bandbreite ${chf(honTot(R.lo,R))} – ${chf(honTot(R.hi,R))}`:""}</div>
+    <div class="bar" aria-hidden="true">${R.phases.map((p,i)=>p.qp?`<span style="width:${p.qp/Math.max(m.q,1)*100}%;background:${PCOL[i]}"></span>`:"").join("")}</div>
+    <div class="legendp">${R.phases.map((p,i)=>p.qp?`<span><i style="background:${PCOL[i]}"></i>${p.id}</span>`:"").join("")}</div>
+    <dl class="kv">
+      <dt>Baukosten Lüftung/Klima</dt><dd>${chf(R.B)}</dd>
+      <dt>Grundfaktor p</dt><dd>${num(m.p,4)}</dd>
+      <dt>Leistungsanteil q</dt><dd>${num(m.q,1)} %</dd>
+      <dt>Prognostizierte Stunden Tp</dt><dd>${num(m.Tp)} h</dd>
+      <dt>Stundenansatz h</dt><dd>${num(m.h,2)}</dd>
+      <div class="sep"></div>
+      <dt>Honorar Baukostenmodell</dt><dd>${chf(m.H)}</dd>
+      <dt>Zusatzleistungen</dt><dd>${chf(R.Z)}</dd>
+      <dt>Nebenkosten ${num(S.nk,1)} %</dt><dd>${chf(R.NK)}</dd>
+      <div class="sep"></div>
+      <dt class="tot">Total exkl. MWST</dt><dd class="tot">${chf(R.net)}</dd>
+      <dt>MWST ${num(S.mwst,1)} %</dt><dd>${chf(R.mw)}</dd>
+      <dt class="tot">Total inkl. MWST</dt><dd class="tot">${chf(R.gross)}</dd>
+      <div class="sep"></div>
+      <dt>Honorar in % der Baukosten</dt><dd>${R.B?num(pct,1)+" %":"–"}</dd>
+    </dl>
+    ${R.warns.length?`<ul class="warns">${R.warns.map(w=>`<li class="${w.c||""}">${esc(w.t)}</li>`).join("")}</ul>`:""}`;
+  $("#mbar").innerHTML=`<span>Honorar exkl. MWST<br><b>${chf(R.net)}</b></span><a href="#below">Details</a>`;
+  document.querySelectorAll("[data-zsum]").forEach(el=>{const z=R.zus[+el.dataset.zsum]; el.textContent=z?chf(z.sum):"";});
+  $("#phName").textContent=(S.name||"Projekt ohne Bezeichnung")+" · "+new Date().toLocaleDateString("de-CH");
+  renderBelow(R);
+}
+function honTot(hx,R){ const nk=(hx.H+R.Z)*(+S.nk||0)/100; return hx.H+R.Z+nk; }
+
+function renderBelow(R){
+  const m=R.main, bw=D.bauwerksarten[+S.bw];
+  const src=k=>D.quellen[k];
+  $("#psum").innerHTML=`<section class="card"><h2>Zusammenfassung</h2><div class="body"><table><tbody>
+    <tr><td>Projekt</td><td><b>${esc(S.name||"–")}</b></td><td>Vorhaben</td><td>${S.art==="neubau"?"Neubau":"Umbau / Erneuerung"}</td></tr>
+    <tr><td>Bauwerksart</td><td>${esc(bw.l)} (Kat. ${bw.k})</td><td>Baukosten Lüftung/Klima</td><td>${chf(R.B)}${R.Bmin!==R.Bmax?` <span style="color:var(--muted)">(${chf(R.Bmin)} – ${chf(R.Bmax)})</span>`:""}</td></tr>
+    <tr><td>Prognostizierte Stunden</td><td>${num(m.Tp)} h à CHF ${num(m.h,2)}</td><td>Honorar in % der Baukosten</td><td>${R.B?num(R.net/R.B*100,1)+" %":"–"}</td></tr>
+    <tr><td>Honorar exkl. MWST</td><td><b>${chf(R.net)}</b></td><td>Honorar inkl. MWST ${num(S.mwst,1)} %</td><td><b>${chf(R.gross)}</b></td></tr>
+  </tbody></table>${R.warns.length?`<ul class="warns">${R.warns.map(w=>`<li class="${w.c||""}">${esc(w.t)}</li>`).join("")}</ul>`:""}</div></section>`;
+  $("#below").innerHTML=`
+  <section class="card"><h2>Honorar nach Teilphasen</h2><div class="body"><div class="tw"><table>
+    <thead><tr><th>Teilphase</th><th class="num">q</th><th class="num">Stunden</th><th class="num">Honorar</th></tr></thead><tbody>
+    ${R.phases.map(p=>`<tr style="${p.on?"":"color:var(--muted)"}"><td>${p.id} ${esc(p.name)}</td><td class="num">${num(p.qp,1)} %</td><td class="num">${num(p.Tp)}</td><td class="num">${chf(p.H)}</td></tr>`).join("")}
+    ${R.zus.map(z=>`<tr><td>Zusatz: ${esc(z.bez||"Leistung")}</td><td class="num">–</td><td class="num">${num(+z.std||0)}</td><td class="num">${chf(z.sum)}</td></tr>`).join("")}
+    <tr><td>Nebenkosten ${num(S.nk,1)} %</td><td></td><td></td><td class="num">${chf(R.NK)}</td></tr>
+    </tbody><tfoot><tr><td>Total exkl. MWST</td><td class="num">${num(m.q,1)} %</td><td class="num">${num(m.Tp+R.zus.reduce((t,z)=>t+(+z.std||0),0))}</td><td class="num">${chf(R.net)}</td></tr></tfoot></table></div></div></section>
+
+  <section class="card"><details open><summary>So wird gerechnet</summary><div class="body formula">
+    <div>Grundfaktor: <code>p = Z1 + Z2 / ∛B</code> = ${num(D.zwerte.z1,3)} + ${num(D.zwerte.z2,2)} / ∛${num(R.B)} = <b>${num(m.p,4)}</b></div>
+    <div>Mittlerer Zeitaufwand: <code>Tm = B × p/100 × n × q/100 × r × U</code> = ${num(R.B)} × ${num(m.p,4)}/100 × ${num(S.n,2)} × ${num(m.q,1)}/100 × ${num(S.r,2)} × ${num(S.U,2)} = <b>${num(m.Tm)} h</b></div>
+    <div>Prognostizierter Zeitaufwand: <code>Tp = Tm × i</code> = ${num(m.Tm)} × ${num(S.i,2)} = <b>${num(m.Tp)} h</b></div>
+    <div>Honorar: <code>H = Tp × s × h</code> = ${num(m.Tp)} × ${num(S.s,2)} × ${num(m.h,2)} = <b>${chf(m.H)}</b></div>
+    <p class="hint">Formeln gemäss SIA 108-K Art. 7.2–7.4. Der Grundfaktor wird je Fachgebiet mit dessen Baukosten berechnet (Art. 7.5.21). ${esc(D.zwerte.hinweis)}</p>
+  </div></details></section>
+
+  <section class="card"><details><summary>Grundlagen und Annahmen</summary><div class="body"><div class="tw"><table>
+    <thead><tr><th>Organisation</th><th>Dokument</th><th>Ausgabe</th><th>Status</th><th>Geprüft</th></tr></thead><tbody>
+    ${Object.values(D.quellen).map(q=>`<tr><td>${esc(q.org)}</td><td>${q.link?`<a href="${esc(q.link)}" target="_blank" rel="noopener">${esc(q.titel)}</a>`:esc(q.titel)}</td><td>${esc(q.ausgabe)}</td><td>${esc(q.status)}</td><td>${esc(q.geprueft)}</td></tr>`).join("")}
+    </tbody></table></div>
+    <p class="hint"><span class="tag ver">verifiziert</span> Formel, Leistungsanteile, Schwierigkeitskategorien, Faktorbandbreiten (SIA 108-K); Z-Werte, r-Vorschläge, Nebenkosten (Stadt Zürich 2025); Kategorieansätze (Kanton TG 2026).<br>
+    <span class="tag ann">Annahme</span> Kostenkennwerte CHF/m², n-Vorschlag je Kategorie, Team-Mix.</p>
+  </div></details></section>
+  <p class="hint" style="margin:0 0 30px;max-width:110ch">Dieser Honorarcheck dient der Plausibilisierung in der frühen Projektphase. Er ersetzt weder eine Honorarofferte noch die vertragliche Vereinbarung der Berechnungsgrundlagen. Die SIA-Formeln sind nur verbindlich, wenn sie vereinbart werden. Fachstand des Tools: ${esc(D.fachstand)}.</p>`;
+}
+
+function render(){ renderMain(); renderResult(); save(); }
+function update(){ renderResult(); save(); }  /* nur Resultat, Fokus bleibt */
+
+/* ---------- Ereignisse ---------- */
+document.addEventListener("input", e=>{
+  const t=e.target, d=t.dataset;
+  if(d.s){ S[d.s]= t.type==="number" ? (t.value===""?"":+t.value) : t.value;
+    if(d.s==="bw"){ if(!S.nManual) S.n=D.nVorschlag[D.bauwerksarten[+S.bw].k]||1; renderMain(); }
+    update(); return; }
+  if(d.row!==undefined){ const r=S.rows[+d.row];
+    if(d.k==="kw") r.kw = t.value===""?null:+t.value; else if(d.k==="ebf") r.ebf=t.value===""?"":+t.value; else r[d.k]=t.value;
+    if(d.k==="nutz"||d.k==="stufe"||(d.k==="kw"&&t.value==="")) renderMain(); else refreshCostCells();
+    update(); return; }
+  if(d.f){ let v=+t.value; S[d.f]=v; if(d.f==="n") S.nManual=true;
+    document.querySelectorAll(`[data-f="${d.f}"]`).forEach(el=>{ if(el!==t) el.value=v; });
+    update(); return; }
+  if(d.phq){ S.ph[d.phq].q=+t.value||0; update(); return; }
+  if(d.rate){ S.rates[d.rate]=+t.value||0; update(); refreshMixFoot(); return; }
+  if(d.mix){ S.mix[d.mix]=+t.value||0; update(); refreshMixFoot(); return; }
+  if(d.z!==undefined){ const z=S.zusatz[+d.z]; z[d.k] = d.k==="bez" ? t.value : (t.value===""?(d.k==="h"?null:""):+t.value); update(); return; }
+});
+document.addEventListener("change", e=>{ const d=e.target.dataset; if(d.ph){ S.ph[d.ph].on=e.target.checked; render(); } });
+function refreshCostCells(){
+  const cc=costs(); const rows=document.querySelectorAll(".costs tbody tr");
+  rows.forEach((tr,i)=>{ const c=tr.children[5]; if(c) c.textContent=chf(cc.lines[i].sum); });
+  const f=document.querySelector(".costs tfoot td.num"); if(f) f.textContent=chf(cc.typ);
+}
+function refreshMixFoot(){ const a=$("#mixH"), b=$("#mixSum"); if(a) a.textContent=num(hEff(),2);
+  if(b){ b.textContent=num(mixSum())+" %"; b.style.color=Math.abs(mixSum()-100)>0.01?"var(--warn)":"inherit"; } }
+document.addEventListener("click", e=>{
+  const b=e.target.closest("button"); if(!b) return; const d=b.dataset;
+  if(d.set){ S[d.set]=d.v; render(); return; }
+  if(d.fset){ S[d.fset]=+d.v; if(d.fset==="n") S.nManual=true; render(); return; }
+  if(d.nsug){ S.n=D.nVorschlag[D.bauwerksarten[+S.bw].k]||1; S.nManual=false; render(); return; }
+  if(d.hset){ S.h=+d.hset; render(); return; }
+  if(d.toggle){ S[d.toggle]=!S[d.toggle]; render(); return; }
+  if(d.delrow!==undefined){ S.rows.splice(+d.delrow,1); render(); return; }
+  if(d.delz!==undefined){ S.zusatz.splice(+d.delz,1); render(); return; }
+  if(d.zadd!==undefined){ S.zusatz.push({bez:d.zadd,std:"",h:null}); render(); return; }
+  if(b.id==="addRow"){ const last=S.rows[S.rows.length-1]; S.rows.push({bez:"",nutz:last?last.nutz:"verwaltung",ebf:"",stufe:"typ",kw:null}); render(); return; }
+  if(b.id==="qReset"){ D.phasen.forEach(p=>S.ph[p.id].q=p.q); render(); return; }
+});
+
+$("#btnPrint").onclick=()=>{ const t=document.title, dt=new Date().toISOString().slice(0,10);
+  const n=(S.name||"Projekt").replace(/[^\wÄÖÜäöüéèà -]/g,"").trim().replace(/\s+/g,"_");
+  document.title="Honorarcheck_Lueftung_"+n+"_"+dt; window.addEventListener("afterprint",()=>{document.title=t;},{once:true});
+  document.querySelectorAll("details").forEach(x=>x.open=true); if(document.activeElement) document.activeElement.blur(); window.print(); };
+$("#btnReset").onclick=()=>{ if(!confirm("Alle Eingaben löschen und neu beginnen?")) return; S=defaults(); render(); window.scrollTo(0,0); };
+
+/* ---------- Übernahme aus anderen Tools ---------- */
+function toast(t){ const el=document.createElement("div"); el.className="toast"; el.textContent=t; document.body.appendChild(el); setTimeout(()=>el.remove(),3200); }
+function readJSON(k){ try{ return JSON.parse(localStorage.getItem(k)||"null"); }catch(e){ return null; } }
+function refreshImports(){
+  $("#impSA").disabled=!readJSON(HANDOFF);
+  $("#impSA").title=readJSON(HANDOFF)?"Daten der Schnellauslegung übernehmen":"Noch keine Daten aus der Schnellauslegung vorhanden";
+  const qc=readJSON(QCKEY); $("#impQC").disabled=!(qc&&qc.A&&qc.A.nutzung);
+  $("#impQC").title=$("#impQC").disabled?"Im Lüftungs-Quickcheck zuerst die Nutzung erfassen":"Projektname, Nutzung und Vorhaben übernehmen";
+}
+$("#impSA").onclick=()=>{
+  const h=readJSON(HANDOFF); if(!h) return;
+  if(h.projekt){ if(h.projekt.name) S.name=h.projekt.name; if(h.projekt.art) S.art=h.projekt.art==="neubau"?"neubau":"umbau"; }
+  if(Array.isArray(h.zonen)&&h.zonen.length){
+    S.kmodus="flaeche";
+    S.rows=h.zonen.map(z=>({bez:z.bezeichnung||"", nutz:D.kennwerte[z.nutzung]?z.nutzung:(D.quickcheckNutzung[z.nutzung]||"verwaltung"), ebf:+z.ebf_m2||"", stufe:"typ", kw:null}));
+  }
+  if(h.kosten_chf>0){ S.kmodus="direkt"; S.direkt=+h.kosten_chf; }
+  render(); toast("Schnellauslegung übernommen: "+(h.zonen?h.zonen.length:0)+" Nutzungen");
+};
+$("#impQC").onclick=()=>{
+  const q=readJSON(QCKEY); if(!q||!q.A) return; const A=q.A;
+  if(A.name) S.name=A.name;
+  S.art = A.art==="neubau" ? "neubau" : "umbau";
+  let nutz=D.quickcheckNutzung[A.nutzung]||"verwaltung";
+  if(nutz==="verwaltung" && (A.kuehl==="komfort"||A.kuehl==="prozess")) nutz="verwaltung_klima";
+  const bi=D.bauwerksarten.findIndex(b=>b.nutzung===nutz); if(bi>=0){ S.bw=bi; if(!S.nManual) S.n=D.nVorschlag[D.bauwerksarten[bi].k]||1; }
+  if(S.rows.length===1 && !S.rows[0].ebf) S.rows[0].nutz=nutz; else S.rows.push({bez:"",nutz,ebf:"",stufe:"typ",kw:null});
+  render(); toast("Aus Quickcheck übernommen – bitte EBF ergänzen");
+  const f=document.querySelector('[data-k="ebf"]'); if(f) f.focus();
+};
+window.addEventListener("storage", refreshImports);
+
+$("#fs").textContent=D.fachstand;
+refreshImports();
+render();
+})();
+</script>
+</body>
+</html>

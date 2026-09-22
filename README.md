@@ -11,6 +11,8 @@ icons/                  App-Symbole (BIM-Werk-Logo)
 assets/                 Firmenlogo hell/dunkel (dunkel für PDF-Bericht)
 .nojekyll               verhindert die Jekyll-Verarbeitung durch GitHub
 lueftung/index.html     Tool «Lüftungsanforderungen»
+honorar/index.html      Tool «Honorarcheck»
+honorar/daten.js        Ansätze, Kennwerte, Faktoren mit Quellen (hier aktualisieren)
 ```
 
 ## Veröffentlichen auf GitHub Pages
@@ -46,3 +48,38 @@ Im Resultat «Bericht drucken / als PDF speichern» wählen und im Druckdialog �
 ## Logo tauschen
 
 Dateien in `assets/` und `icons/` mit gleichem Namen ersetzen. Auf dem Handy muss die Verknüpfung danach gelöscht und neu angelegt werden, damit das neue Symbol erscheint.
+
+## Honorarcheck aktualisieren
+
+Alle Zahlen stehen in `honorar/daten.js`, jeweils mit Quelle und Prüfdatum:
+
+- `kennwerte` – Kostenkennwerte CHF/m² EBF (aktuell Platzhalter-Annahmen, durch eigene Nachkalkulationen ersetzen)
+- `kategorien` – Stundenansätze A–G
+- `teamMix` – Standard-Teamzusammensetzung in % der Stunden
+- `mittelansaetze` – Referenz-Mittelansätze
+- `nVorschlag` – Vorschlag Schwierigkeitsgrad je SIA-Kategorie (Annahme)
+- `zwerte`, `phasen` – SIA-Werte, nur bei neuer SIA-Publikation ändern
+
+Nach dem Ändern `fachstand` anpassen und die Datei auf GitHub ersetzen.
+
+## Datenübergabe zwischen den Tools
+
+Alle Tools laufen unter derselben Adresse und teilen sich den Browserspeicher. Die Übergabe läuft über den Schlüssel `bimwerk.handoff.v1` (JSON). Die künftige Schnellauslegung schreibt dieses Format, der Honorarcheck liest es («Aus Schnellauslegung übernehmen»):
+
+```json
+{
+  "version": 1,
+  "source": "schnellauslegung",
+  "created": "2026-09-22T10:00:00Z",
+  "projekt": { "name": "Überbauung Rheinweg", "kanton": "SH", "art": "neubau" },
+  "zonen": [
+    { "bezeichnung": "Wohnungen", "nutzung": "mfh", "ebf_m2": 2400, "volumen_m3": 6240, "luftmenge_m3h": 3600 },
+    { "bezeichnung": "Gewerbe EG", "nutzung": "verwaltung", "ebf_m2": 350, "volumen_m3": 1100, "luftmenge_m3h": 1400 }
+  ],
+  "kosten_chf": null
+}
+```
+
+- `nutzung`: Schlüssel wie in `kennwerte` (z. B. `efh`, `mfh`, `verwaltung`, `verwaltung_klima`, `schule`, `verkauf`, `restaurant`, `spital`, `labor`, `industrie`, `lager`, `sport`, `hallenbad`, `garage`).
+- `kosten_chf`: optional; wenn gesetzt, übernimmt der Honorarcheck diesen Betrag direkt als Baukosten.
+- Der Honorarcheck liest zusätzlich den Lüftungs-Quickcheck (`lk-quickcheck-v1`) für Projektname, Nutzung und Vorhaben.
