@@ -44,6 +44,8 @@ a.tool:hover{border-color:var(--ink);border-top-color:var(--c)}
 .state.soon{color:var(--muted);border-style:dotted}
 .tool.soon{background:var(--panel2);opacity:.8}
 .tool.soon h2{color:var(--muted)}
+.tool.info{background:transparent;border-style:dashed;border-top-style:dashed}
+.tool.info h2{color:var(--muted)}
 footer{color:var(--muted);font-size:.82rem;padding:0 0 30px;max-width:80ch}
 </style>
 </head>
@@ -89,9 +91,10 @@ const TOOLS = [
   },
   {
     title: "Schnellauslegung",
-    desc: "Überschlägige Auslegung für Vorprojekt und Machbarkeit.",
+    desc: "Luftmengen je Zone abschätzen und die Investition über CHF pro m³/h und Anlagenkomplexität hochrechnen.",
     href: "auslegung/",
-    status: "soon",
+    status: "live",
+    stand: "22.09.2026",
     color: "var(--aul)"
   },
   {
@@ -100,11 +103,18 @@ const TOOLS = [
     href: "brandschutz/",
     status: "soon",
     color: "var(--fol)"
+  },
+  {
+    title: "Weitere Tools in Arbeit",
+    desc: "Die Sammlung wird laufend ergänzt. Neue Werkzeuge erscheinen hier, sobald sie fachlich geprüft sind.",
+    status: "info",
+    color: "var(--line)"
   }
 ];
 
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 document.getElementById("tools").innerHTML = TOOLS.map(t => {
+  if (t.status === "info") return `<div class="tool info" style="--c:${t.color}"><h2>${esc(t.title)}</h2><p>${esc(t.desc)}</p><div class="foot"><span class="state soon">Laufend erweitert</span></div></div>`;
   const live = t.status === "live";
   const inner = `<h2>${esc(t.title)}</h2><p>${esc(t.desc)}</p>
     <div class="foot"><span class="state ${live ? "live" : "soon"}">${live ? "Verfügbar" : "In Vorbereitung"}</span>

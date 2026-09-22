@@ -13,6 +13,8 @@ assets/                 Firmenlogo hell/dunkel (dunkel für PDF-Bericht)
 lueftung/index.html     Tool «Lüftungsanforderungen»
 honorar/index.html      Tool «Honorarcheck»
 honorar/daten.js        Ansätze, Kennwerte, Faktoren mit Quellen (hier aktualisieren)
+auslegung/index.html    Tool «Schnellauslegung»
+auslegung/daten.js      Luftmengen-Vorlagen, CHF pro m³/h, Faktoren mit Quellen
 ```
 
 ## Veröffentlichen auf GitHub Pages
@@ -83,3 +85,22 @@ Alle Tools laufen unter derselben Adresse und teilen sich den Browserspeicher. D
 - `nutzung`: Schlüssel wie in `kennwerte` (z. B. `efh`, `mfh`, `verwaltung`, `verwaltung_klima`, `schule`, `verkauf`, `restaurant`, `spital`, `labor`, `industrie`, `lager`, `sport`, `hallenbad`, `garage`).
 - `kosten_chf`: optional; wenn gesetzt, übernimmt der Honorarcheck diesen Betrag direkt als Baukosten.
 - Der Honorarcheck liest zusätzlich den Lüftungs-Quickcheck (`lk-quickcheck-v1`) für Projektname, Nutzung und Vorhaben.
+
+## Schnellauslegung aktualisieren
+
+In `auslegung/daten.js`:
+
+- `anlagentypen` – Kostenkennwerte CHF pro m³/h (min / typ / max) je Anlagetyp
+- `groessenfaktor` – Zuschlag bzw. Abzug je Anlagengrösse
+- `komplexitaet` – Faktoren einfach / normal / erhöht / hoch
+- `vorlagen` – Zonen-Vorlagen mit Methode und Standardwerten (m² pro Person, m³/(h·m²), Luftwechsel)
+- `wohnen` – Auslegungswerte nach SIA 382/5 (nur bei Normänderung anpassen)
+
+## Daten-Dateien bearbeiten – worauf achten
+
+- Mit einem reinen Texteditor öffnen (z. B. Editor/Notepad, TextEdit im Modus «Reiner Text», VS Code) – nicht mit Word.
+- Oder direkt auf GitHub: Datei öffnen → Stift-Symbol → ändern → «Commit changes».
+- Dezimalpunkt statt Komma: `138.6`, nicht `138,6`.
+- Kommas zwischen den Einträgen und Anführungszeichen um Texte stehen lassen.
+- Nach dem Ändern `fachstand` aktualisieren.
+- Ist nach einer Änderung die Seite leer, liegt fast immer ein Tippfehler vor (fehlendes Komma, Anführungszeichen). Letzte Version auf GitHub unter «History» wiederherstellen.

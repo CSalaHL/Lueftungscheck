@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Schnellauslegung Lüftung – BIM Werk</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="../icons/favicon-32.png">
+<meta name="theme-color" content="#383633">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..750&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#ECEFEE; --panel:#FFFFFF; --panel2:#F6F8F7; --ink:#16202A; --muted:#55626D; --line:#C8D0D5;
+  --ok:#1D7446; --warn:#9A6200; --bad:#B3261E; --zul:#2360A3; --abl:#C49A1E; --brand:#383633; --chip:#E3E8EA;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#11171C;--panel:#192128;--panel2:#1F2830;--ink:#E4EAEE;--muted:#9BA8B2;--line:#2F3B45;
+    --ok:#4FC38B;--warn:#E2A73C;--bad:#F2766C;--zul:#72A9E8;--abl:#E3BF4A;--brand:#E6E3DE;--chip:#26313A}
+}
+:root[data-theme="dark"]{--bg:#11171C;--panel:#192128;--panel2:#1F2830;--ink:#E4EAEE;--muted:#9BA8B2;--line:#2F3B45;
+  --ok:#4FC38B;--warn:#E2A73C;--bad:#F2766C;--zul:#72A9E8;--abl:#E3BF4A;--brand:#E6E3DE;--chip:#26313A}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;font-variant-numeric:tabular-nums}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--zul);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+header.top{padding-top:24px;padding-bottom:14px}
+.home{display:inline-block;margin-bottom:14px;color:var(--zul);font-weight:600;text-decoration:none;font-size:.92rem}
+.home::before{content:"‹ "}
+.duct{display:flex;gap:6px;margin-bottom:16px;max-width:520px}
+.duct span{height:6px;flex:1;border-radius:3px;background:var(--abl)}
+.duct span:nth-child(2){background:var(--zul)}.duct span:nth-child(3){background:var(--brand);opacity:.5}
+h1{font-stretch:118%;font-weight:720;font-size:clamp(1.6rem,3.4vw,2.4rem);line-height:1.08;margin:0 0 6px}
+.lead{color:var(--muted);margin:0;max-width:72ch}
+.fachstand{margin:8px 0 0;font-size:.88rem;color:var(--muted)}.fachstand b{color:var(--ink)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{border:1px solid var(--line);background:var(--panel);padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:560;font-size:.93rem}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--zul);border-color:var(--zul);color:#fff}
+.btn.small{padding:4px 10px;font-size:.84rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.notice{border:1px solid var(--line);border-left:5px solid var(--warn);background:var(--panel);border-radius:8px;padding:10px 14px;font-size:.88rem;color:var(--muted);margin:10px 0 0;max-width:110ch}
+.notice b{color:var(--ink)}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start;padding:18px 0 40px}
+@media (max-width:980px){.grid{grid-template-columns:1fr}}
+.grid>*{min-width:0}
+@media (max-width:640px){.wrap{padding:0 12px}.body{padding:8px 14px 16px}.card>h2{padding:14px 14px 2px}.card>.sub{padding:0 14px 8px}.mixtab td:nth-child(2){font-size:.8rem}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:16px}
+.card>h2{margin:0;padding:16px 20px 2px;font-size:1.15rem;font-stretch:110%;font-weight:680;display:flex;gap:10px;align-items:baseline}
+.card>h2 .no{color:var(--zul);font-weight:700}
+.card>.sub{margin:0;padding:0 20px 8px;color:var(--muted);font-size:.88rem}
+.body{padding:8px 20px 18px}
+.row{display:flex;flex-wrap:wrap;gap:14px 18px;align-items:flex-end;margin-bottom:12px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label,.lbl{font-weight:600;font-size:.88rem}
+.field small{color:var(--muted);font-size:.8rem}
+input[type=text],input[type=number],select{padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);min-width:0}
+input[type=number]{text-align:right}
+.w-name{width:min(420px,100%)}.w-bw{width:min(460px,100%)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{border:0;background:var(--panel2);padding:7px 13px;cursor:pointer;font-size:.9rem}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--zul);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--panel2);padding:3px 10px;border-radius:14px;cursor:pointer;font-size:.82rem}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{border-color:var(--zul);color:var(--zul);font-weight:650}
+.tag{display:inline-block;font-size:.72rem;font-weight:650;padding:1px 7px;border-radius:4px;border:1.5px solid currentColor;white-space:nowrap;vertical-align:middle}
+.tag.ver{color:var(--ok)}.tag.ann{color:var(--warn);border-style:dashed}
+.kat{display:inline-block;min-width:40px;text-align:center;font-weight:700;font-stretch:115%;padding:2px 8px;border-radius:4px;background:var(--chip)}
+.hint{font-size:.83rem;color:var(--muted);margin:6px 0 0;max-width:80ch}
+.warnbox{border:1px dashed var(--warn);border-radius:8px;padding:8px 12px;font-size:.84rem;color:var(--muted);margin:0 0 12px}
+.warnbox b{color:var(--warn)}
+
+/* tables */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{background:var(--panel2);font-size:.8rem;font-weight:650;color:var(--muted);white-space:nowrap}
+td.num,th.num{text-align:right}
+tfoot td{font-weight:700;border-bottom:0}
+table input,table select{width:100%}
+.costs{min-width:760px}
+.costs .c-ebf{width:95px}.costs .c-kw{width:95px}.costs .c-st{width:110px}
+.del{border:0;background:none;color:var(--muted);cursor:pointer;font-size:1.1rem;padding:2px 6px}
+.del:hover{color:var(--bad)}
+.manual{border-color:var(--zul)!important;box-shadow:inset 0 0 0 1px var(--zul)}
+
+/* factors */
+.fac{display:grid;grid-template-columns:150px minmax(0,1fr) 84px;gap:6px 14px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.fac:first-child{border-top:0}
+.fac .fn{font-weight:650}
+.fac .fn small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
+.fac input[type=range]{width:100%;accent-color:var(--zul)}
+.fac .extra{grid-column:2 / 4}
+@media (max-width:640px){.fac{grid-template-columns:1fr 84px}.fac .fn{grid-column:1 / 3}.fac .extra{grid-column:1 / 3}}
+
+/* phases */
+.ph{display:grid;grid-template-columns:28px 44px minmax(0,1fr) 80px;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line);font-size:.93rem}
+.ph:first-child{border-top:0}
+.ph .pid{color:var(--muted);font-weight:650}
+.ph input[type=checkbox]{width:18px;height:18px;accent-color:var(--zul)}
+.qsum{display:flex;justify-content:space-between;padding-top:10px;border-top:2px solid var(--ink);font-weight:700;margin-top:4px}
+
+/* result */
+aside .card{position:sticky;top:calc(12px + env(safe-area-inset-top,0px))}
+.res{padding:16px 18px 18px}
+.res h2{margin:0 0 10px;font-size:1.05rem;font-stretch:110%}
+.big{font-size:2rem;font-weight:720;font-stretch:112%;line-height:1.1;margin:2px 0}
+.bigl{color:var(--muted);font-size:.82rem}
+.kv{display:grid;grid-template-columns:1fr auto;gap:3px 12px;font-size:.9rem;margin:12px 0 0}
+.kv dt{color:var(--muted)}.kv dd{margin:0;text-align:right;font-weight:600}
+.kv .sep{grid-column:1 / 3;border-top:1px solid var(--line);margin:5px 0}
+.kv .tot dt,.kv .tot dd{color:var(--ink);font-weight:750}
+.bar{display:flex;height:12px;border-radius:3px;overflow:hidden;margin:14px 0 4px;background:var(--chip)}
+.bar span{display:block;height:100%}
+.legendp{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:.74rem;color:var(--muted)}
+.legendp i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.warns{margin:12px 0 0;padding:0;list-style:none;font-size:.82rem}
+.warns li{padding:6px 9px;border-left:3px solid var(--warn);background:var(--panel2);margin-bottom:5px;border-radius:0 4px 4px 0}
+.warns li.bad{border-left-color:var(--bad)}
+details{border-top:1px solid var(--line)}
+details summary{cursor:pointer;padding:12px 20px;font-weight:650}
+details .body{padding-top:0}
+.formula{font-size:.9rem;line-height:1.8}
+.formula code{background:var(--panel2);padding:1px 6px;border-radius:4px;font-family:inherit;font-weight:600}
+.mobilebar{display:none}
+@media (max-width:980px){
+  .mobilebar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:10;justify-content:space-between;align-items:center;gap:10px;
+    background:var(--brand);color:#fff;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+  :root[data-theme="dark"] .mobilebar{color:#16202A}
+  .mobilebar b{font-size:1.15rem;font-stretch:112%}
+  .mobilebar a{color:inherit;font-size:.85rem}
+  body{padding-bottom:70px}
+  body .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));max-width:90vw;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:8px;font-size:.9rem;z-index:20}
+.printhead,.printonly{display:none}
+
+@page{size:A4 portrait;margin:15mm 14mm 17mm 14mm;
+  @bottom-left{content:"BIM Werk – Honorarcheck Lüftung/Klima";font:7.5pt Archivo,Helvetica,Arial,sans-serif;color:#666}
+  @bottom-right{content:"Seite " counter(page) " / " counter(pages);font:7.5pt Archivo,Helvetica,Arial,sans-serif;color:#666}}
+@media print{
+  :root:root:root{--bg:#fff;--panel:#fff;--panel2:#F3F5F5;--ink:#1A1A1A;--muted:#555;--line:#BFC6CA;--ok:#1D7446;--warn:#9A6200;--bad:#B3261E;--zul:#2360A3;--chip:#E6E9EA}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{background:#fff;font-size:9.5pt;line-height:1.4;padding:0}
+  header.top,.toolbar,.mobilebar,.noprint,.toast,.notice{display:none!important}
+  .printhead{display:flex;justify-content:space-between;align-items:flex-end;gap:10mm;padding-bottom:3mm;margin-bottom:4mm;border-bottom:1.5pt solid #383633}
+  .printhead img{height:15mm}
+  .printhead .pt{text-align:right;font-size:9pt;color:#383633}
+  .printhead .pt b{display:block;font-size:13pt;color:#1A1A1A}
+  .printonly{display:block}
+  .wrap{max-width:none;padding:0}
+  .grid{display:block;padding:0}
+  aside{display:none}
+  .card{border:0;border-radius:0;margin:0 0 3mm;break-inside:avoid}
+  .card>h2{padding:2mm 0 1mm;font-size:11pt;border-bottom:1pt solid var(--line)}
+  .card>.sub{padding:0 0 1mm;font-size:8pt}
+  .body{padding:1.5mm 0 2mm}
+  input,select{border:0!important;background:none!important;padding:0!important;box-shadow:none!important;-webkit-appearance:none;appearance:none;font-size:9pt}
+  input[type=range],.chips,.seg,.del,.btn,.addrow{display:none!important}
+  .costs{min-width:0}
+  table{font-size:8.5pt}th,td{padding:1.2mm 2mm}
+  .fac{grid-template-columns:40mm 1fr 20mm;padding:1.5mm 0}
+  .fac .extra{display:none}
+  details{border:0}details summary{display:none}
+  details>.body{display:block}
+  .tw{border:0;overflow:visible}
+  .ph{padding:.8mm 0}
+  input[type=text]::placeholder{color:transparent}
+  td.num{white-space:nowrap}
+  #psum .card{border:1pt solid #383633;padding:0 3mm 1mm}
+  #psum h2{border-bottom:0}
+  #psum td{font-size:9pt}
+}
+
+.duct span{background:#3C8B40}.duct span:nth-child(2){background:var(--zul)}.duct span:nth-child(3){background:var(--abl);opacity:1}
+.zone{border-top:1px solid var(--line);padding:14px 0}
+.zone:first-child{border-top:0;padding-top:4px}
+.zhead{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:10px;align-items:end}
+@media (max-width:640px){.zhead{grid-template-columns:1fr auto}.zhead .zbez{grid-column:1 / 3}}
+.zfields{display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:10px;align-items:flex-end}
+.zfields .field input{width:110px}
+.zfields .field select{width:auto}
+.zres{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.88rem;color:var(--muted)}
+.zres b{color:var(--ink);font-size:1rem}
+.tag.own{color:var(--zul)}
+.ft{font-size:.72rem;margin-left:4px}
+.qadd{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.anl td select{width:auto}
+.linkrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.linkrow a{color:var(--zul);font-weight:600}
+</style>
+</head>
+<body>
+<header class="top wrap">
+  <a class="home" href="../">Alle Tools</a>
+  <div class="duct" aria-hidden="true"><span></span><span></span><span></span></div>
+  <h1>Schnellauslegung Lüftung</h1>
+  <p class="lead">Luftmengen je Zone überschlägig bestimmen, zu Anlagen zusammenfassen und die Investition über CHF pro m³/h und Anlagenkomplexität hochrechnen. Für Vorstudie und Vorprojekt – keine Detailauslegung.</p>
+  <p class="fachstand">Fachstand des Tools: <b id="fs"></b></p>
+  <div class="toolbar">
+    <button class="btn" id="impQC" type="button">Aus Lüftungs-Quickcheck übernehmen</button>
+    <button class="btn primary" id="toHon" type="button">An Honorarcheck übergeben</button>
+    <button class="btn" id="btnPrint" type="button">Bericht drucken / als PDF speichern</button>
+    <button class="btn" id="btnReset" type="button">Neu beginnen</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="printhead"><img src="../assets/logo-dark.png" alt="BIM Werk"><div class="pt"><b>Schnellauslegung Lüftung</b><span id="phName"></span></div></div>
+  <div id="psum" class="printonly"></div>
+  <div class="grid">
+    <div id="main"></div>
+    <aside><div class="card"><div class="res" id="res"></div></div></aside>
+  </div>
+  <section id="below"></section>
+</main>
+<div class="mobilebar" id="mbar"></div>
+
+<script src="daten.js"></script>
+<script>
+(function(){
+"use strict";
+const D = window.AUSLEGUNG_DATEN;
+const KEY="bimwerk.auslegung.v1", HANDOFF="bimwerk.handoff.v1", QCKEY="lk-quickcheck-v1";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const num=(v,d=0)=>Number(v||0).toLocaleString("de-CH",{minimumFractionDigits:d,maximumFractionDigits:d});
+const chf=v=>"CHF "+Math.round(v||0).toLocaleString("de-CH");
+const VORL=Object.fromEntries(D.vorlagen.map(v=>[v.id,v]));
+const RAL=Object.fromEntries(D.ralStufen.map(r=>[r.id,r]));
+const METH={wohnung:"Wohnungen nach SIA 382/5",personen:"Personenbezogen",flaeche:"Flächenbezogen",luftwechsel:"Luftwechsel",manuell:"Luftmenge bekannt"};
+
+/* ---------- Zustand ---------- */
+let uid=1;
+function zoneFrom(vid, extra={}){
+  const v=VORL[vid]||VORL.eigen;
+  return Object.assign({id:uid++, vorlage:v.id, bez:"", anlage:v.anlage, flaeche:"", hoehe:2.7,
+    mP:v.mP??"", qP:v.qP??"", ral:v.ral||"hoch", qA:v.qA??"", lw:v.lw??"", manuell:"",
+    w:{anz:1, zimmer:3, einzel:0, bad:1, wc:1}}, extra);
+}
+function defaults(){ return {name:"", art:"neubau", zonen:[zoneFrom("buero")], anl:{}}; }
+let S;
+try{ S=Object.assign(defaults(), JSON.parse(localStorage.getItem(KEY)||"{}")); }catch(e){ S=defaults(); }
+S.zonen.forEach(z=>{ uid=Math.max(uid,(z.id||0)+1); });
+const save=()=>{ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} };
+const anlCfg=t=>{ if(!S.anl[t]) S.anl[t]={kw:null, komp:"normal"}; return S.anl[t]; };
+
+/* ---------- Berechnung ---------- */
+function qPof(z){ const v=VORL[z.vorlage]; return z.qP!==""&&z.qP!=null ? +z.qP : (v.qP ?? RAL[z.ral||"hoch"].qP); }
+function zoneCalc(z){
+  const v=VORL[z.vorlage], A=+z.flaeche||0, H=+z.hoehe||0;
+  let V=0, info="";
+  if(v.m==="wohnung"){
+    const W=D.wohnen, zu=(+z.w.zimmer||0)*W.zuluftZimmer+(+z.w.einzel||0)*W.zuluftEinzel;
+    const ab=W.abluftKueche+(+z.w.bad||0)*W.abluftBad+(+z.w.wc||0)*W.abluftWC;
+    const pro=Math.max(zu,ab); V=pro*(+z.w.anz||0);
+    info=`je Wohnung: Zuluft ${num(zu)} / Abluft ${num(ab)} → ${num(pro)} m³/h`;
+  } else if(v.m==="personen"){
+    const mP=+z.mP||0, P=mP?A/mP:0, q=qPof(z); V=P*q; info=`${num(P,0)} Personen × ${num(q)} m³/h·P`;
+  } else if(v.m==="flaeche"){ V=A*(+z.qA||0); info=`${num(A)} m² × ${num(+z.qA,1)} m³/(h·m²)`; }
+  else if(v.m==="luftwechsel"){ V=A*H*(+z.lw||0); info=`${num(A*H)} m³ × ${num(+z.lw,1)} 1/h`; }
+  else { V=+z.manuell||0; info="eingegeben"; }
+  return {V, A, vol:A*H, spez:A?V/A:0, lw:(A&&H)?V/(A*H):0, info};
+}
+function gfOf(V){ return D.groessenfaktor.find(g=>V<=g.bis) || D.groessenfaktor[D.groessenfaktor.length-1]; }
+function calc(){
+  const zc=S.zonen.map(z=>({z, ...zoneCalc(z)}));
+  const groups={};
+  zc.forEach(r=>{ const t=r.z.anlage; (groups[t]=groups[t]||{t,V:0,A:0,zonen:[]}); groups[t].V+=r.V; groups[t].A+=r.A; groups[t].zonen.push(r); });
+  const anl=Object.values(groups).map(g=>{
+    const T=D.anlagentypen[g.t], c=anlCfg(g.t), man=c.kw!==null&&c.kw!=="";
+    const gf=gfOf(g.V), kf=(D.komplexitaet.find(k=>k.id===c.komp)||D.komplexitaet[1]);
+    const k=x=>g.V*x*gf.f*kf.f;
+    return {...g, T, man, kwTyp:man?+c.kw:T.typ, gf, kf, typ:k(man?+c.kw:T.typ), min:k(man?+c.kw:T.min), max:k(man?+c.kw:T.max)};
+  });
+  const V=zc.reduce((t,r)=>t+r.V,0), A=zc.reduce((t,r)=>t+r.A,0);
+  const typ=anl.reduce((t,a)=>t+a.typ,0), min=anl.reduce((t,a)=>t+a.min,0), max=anl.reduce((t,a)=>t+a.max,0);
+  const warns=[];
+  if(anl.some(a=>!a.man)) warns.push("Kostenkennwerte, Grössen- und Komplexitätsfaktoren sind Annahmen des Tools – durch eigene Werte ersetzen.");
+  zc.forEach(r=>{ const v=VORL[r.z.vorlage]; if(v.hinweis) warns.push((r.z.bez||v.l)+": "+v.hinweis);
+    if(v.m!=="wohnung" && v.m!=="manuell" && !r.A) warns.push((r.z.bez||v.l)+": Fläche fehlt."); });
+  return {zc, anl, V, A, typ, min, max, warns};
+}
+
+/* ---------- Tags ---------- */
+function tag(z, field){
+  const v=VORL[z.vorlage];
+  const def={mP:v.mP, qA:v.qA, lw:v.lw}[field];
+  if(field==="qP"){
+    if(z.qP!==""&&z.qP!=null&&+z.qP!==(v.qP??RAL[z.ral||"hoch"].qP)) return `<span class="tag own ft">eigener Wert</span>`;
+    return `<span class="tag ver ft">verifiziert</span>`;
+  }
+  if(field==="wohnung") return `<span class="tag ver ft">SIA 382/5</span>`;
+  if(z[field]!==""&&+z[field]!==def) return `<span class="tag own ft">eigener Wert</span>`;
+  const ok=(field==="qA"&&v.qAv);
+  return ok?`<span class="tag ver ft">verifiziert</span>`:`<span class="tag ann ft">Annahme</span>`;
+}
+
+/* ---------- Rendering ---------- */
+const vorlOpt=sel=>D.vorlagen.map(v=>`<option value="${v.id}" ${sel===v.id?"selected":""}>${esc(v.l)}</option>`).join("");
+const anlOpt=sel=>Object.entries(D.anlagentypen).map(([k,a])=>`<option value="${k}" ${sel===k?"selected":""}>${esc(a.l)}</option>`).join("");
+function fld(z,key,label,val,step,tg=""){
+  return `<div class="field"><label for="z${z.id}_${key}">${label}${tg}</label><input type="number" id="z${z.id}_${key}" data-zid="${z.id}" data-k="${key}" value="${esc(val)}" step="${step}" min="0"></div>`;
+}
+function zoneHTML(z){
+  const v=VORL[z.vorlage], r=zoneCalc(z);
+  let f="";
+  if(v.m==="wohnung"){
+    f+=fld(z,"w.anz","Anzahl Wohnungen",z.w.anz,1)+fld(z,"w.zimmer","Zimmer (30 m³/h)",z.w.zimmer,1,tag(z,"wohnung"))
+      +fld(z,"w.einzel","Einzelzimmer (20 m³/h)",z.w.einzel,1)+fld(z,"w.bad","Bäder/Duschen",z.w.bad,1)+fld(z,"w.wc","Separate WC",z.w.wc,1)
+      +fld(z,"flaeche","EBF m² (optional)",z.flaeche,10);
+  } else {
+    if(v.m!=="manuell") f+=fld(z,"flaeche","Fläche m²",z.flaeche,10);
+    if(v.m==="personen"){
+      f+=fld(z,"mP","m² pro Person",z.mP,0.5,tag(z,"mP"));
+      if(v.qP==null) f+=`<div class="field"><label for="z${z.id}_ral">Raumluftqualität</label><select id="z${z.id}_ral" data-zid="${z.id}" data-k="ral">${D.ralStufen.map(s=>`<option value="${s.id}" ${z.ral===s.id?"selected":""}>${esc(s.l)} (${s.qP} m³/h·P)</option>`).join("")}</select></div>`;
+      f+=fld(z,"qP","m³/h pro Person",qPof(z),1,tag(z,"qP"));
+    }
+    if(v.m==="flaeche") f+=fld(z,"qA","m³/(h·m²)",z.qA,0.5,tag(z,"qA"));
+    if(v.m==="luftwechsel") f+=fld(z,"hoehe","Raumhöhe m",z.hoehe,0.1)+fld(z,"lw","Luftwechsel 1/h",z.lw,0.5,tag(z,"lw"));
+    if(v.m==="manuell") f+=fld(z,"flaeche","Fläche m² (optional)",z.flaeche,10)+fld(z,"manuell","Luftmenge m³/h",z.manuell,50);
+  }
+  return `<div class="zone"><div class="zhead">
+    <div class="field zbez"><label for="z${z.id}_bez">Bezeichnung</label><input type="text" id="z${z.id}_bez" data-zid="${z.id}" data-k="bez" value="${esc(z.bez)}" placeholder="${esc(v.l)}"></div>
+    <div class="field"><label for="z${z.id}_v">Nutzung · <span style="font-weight:400;color:var(--muted)">${METH[v.m]}</span></label><select id="z${z.id}_v" data-zid="${z.id}" data-k="vorlage">${vorlOpt(z.vorlage)}</select></div>
+    <button class="del noprint" type="button" data-del="${z.id}" aria-label="Zone löschen">×</button></div>
+    <div class="zfields">${f}
+      <div class="field"><label for="z${z.id}_a">Anlage</label><select id="z${z.id}_a" data-zid="${z.id}" data-k="anlage">${anlOpt(z.anlage)}</select></div></div>
+    <div class="zres"><span>Luftmenge <b data-zv="${z.id}">${num(r.V)} m³/h</b></span><span data-zi="${z.id}">${esc(r.info)}</span></div></div>`;
+}
+function renderMain(){
+  const R=calc();
+  let h=`<section class="card"><h2><span class="no">1</span>Projekt</h2><div class="body"><div class="row">
+    <div class="field"><label for="f_name">Projektbezeichnung</label><input type="text" id="f_name" class="w-name" data-s="name" value="${esc(S.name)}"></div>
+    <div class="field"><span class="lbl">Vorhaben</span><div class="seg" role="group">
+      <button type="button" data-art="neubau" aria-pressed="${S.art==="neubau"}">Neubau</button>
+      <button type="button" data-art="umbau" aria-pressed="${S.art==="umbau"}">Umbau / Erneuerung</button></div><span class="printonly">${S.art==="neubau"?"Neubau":"Umbau / Erneuerung"}</span></div></div></div></section>`;
+  h+=`<section class="card"><h2><span class="no">2</span>Zonen und Luftmengen</h2><p class="sub">Je Nutzung eine Zone. Die Methode ergibt sich aus der Nutzung; alle Werte lassen sich überschreiben.</p><div class="body">
+    ${S.zonen.map(zoneHTML).join("")}
+    <div class="qadd noprint"><span class="lbl" style="align-self:center;margin-right:4px">Zone hinzufügen:</span>${D.vorlagen.map(v=>`<button type="button" class="chip" data-add="${v.id}">+ ${esc(v.l)}</button>`).join("")}</div>
+  </div></section>`;
+  h+=`<section class="card"><h2><span class="no">3</span>Anlagen und Investition</h2><p class="sub">Zonen mit gleichem Anlagetyp werden zu einer Anlage zusammengefasst. Kosten = Luftmenge × CHF pro m³/h × Grössenfaktor × Komplexität.</p><div class="body">
+    <p class="warnbox"><b>Annahme:</b> Kennwerte CHF pro m³/h, Grössen- und Komplexitätsfaktoren sind Platzhalter des Tools. Eigene Werte direkt in der Tabelle eintragen oder dauerhaft in <code>auslegung/daten.js</code> hinterlegen.</p>
+    <div class="tw"><table class="anl" style="min-width:720px"><thead><tr><th>Anlage</th><th class="num">m³/h</th><th class="num">CHF pro m³/h</th><th class="num">Grösse</th><th>Komplexität</th><th class="num">Investition</th></tr></thead><tbody>
+    ${R.anl.map(a=>`<tr><td>${esc(a.T.l)}</td><td class="num">${num(a.V)}</td>
+      <td class="num" style="width:110px"><input type="number" min="0" step="1" data-kw="${a.t}" class="${a.man?"manual":""}" value="${a.man?esc(S.anl[a.t].kw):""}" placeholder="${num(a.T.typ)}"></td>
+      <td class="num" title="${esc(a.gf.l)}">× ${num(a.gf.f,2)}</td>
+      <td><select data-komp="${a.t}">${D.komplexitaet.map(k=>`<option value="${k.id}" ${a.kf.id===k.id?"selected":""} title="${esc(k.d)}">${esc(k.l)} × ${num(k.f,2)}</option>`).join("")}</select></td>
+      <td class="num">${chf(a.typ)}</td></tr>`).join("")}
+    </tbody><tfoot><tr><td>Total</td><td class="num">${num(R.V)}</td><td colspan="3">Bandbreite ${chf(R.min)} – ${chf(R.max)}</td><td class="num">${chf(R.typ)}</td></tr></tfoot></table></div>
+    <p class="hint">Komplexität: ${D.komplexitaet.map(k=>`<b>${esc(k.l)}</b> – ${esc(k.d)}`).join(" · ")}.</p>
+  </div></section>`;
+  $("#main").innerHTML=h;
+}
+function renderResult(){
+  const R=calc();
+  $("#res").innerHTML=`<h2>Ergebnis</h2>
+    <div class="bigl">Luftmenge total</div><div class="big">${num(R.V)} m³/h</div>
+    <div class="bigl">Investition Lüftung ${chf(R.typ)}</div>
+    <dl class="kv">
+      ${R.anl.map(a=>`<dt>${esc(a.T.l)}</dt><dd>${num(a.V)} m³/h</dd>`).join("")}
+      <div class="sep"></div>
+      <dt>Investition typisch</dt><dd>${chf(R.typ)}</dd>
+      <dt>Bandbreite</dt><dd>${chf(R.min)} – ${chf(R.max)}</dd>
+      <div class="sep"></div>
+      <dt>Fläche erfasst</dt><dd>${num(R.A)} m²</dd>
+      <dt>Luftmenge pro m²</dt><dd>${R.A?num(R.V/R.A,1)+" m³/(h·m²)":"–"}</dd>
+      <dt>Investition pro m²</dt><dd>${R.A?chf(R.typ/R.A):"–"}</dd>
+    </dl>
+    ${R.warns.length?`<ul class="warns">${R.warns.map(w=>`<li>${esc(w)}</li>`).join("")}</ul>`:""}
+    <div class="linkrow noprint"><button class="btn primary small" type="button" id="toHon2">An Honorarcheck übergeben</button></div>`;
+  $("#toHon2").onclick=handoff;
+  $("#mbar").innerHTML=`<span>${num(R.V)} m³/h · ${chf(R.typ)}<br><b>Investition Lüftung</b></span><a href="#below">Details</a>`;
+  S.zonen.forEach(z=>{ const r=zoneCalc(z), a=document.querySelector(`[data-zv="${z.id}"]`), b=document.querySelector(`[data-zi="${z.id}"]`);
+    if(a) a.textContent=num(r.V)+" m³/h"; if(b) b.textContent=r.info; });
+  $("#phName").textContent=(S.name||"Projekt ohne Bezeichnung")+" · "+new Date().toLocaleDateString("de-CH");
+  $("#psum").innerHTML=`<section class="card"><h2>Zusammenfassung</h2><div class="body"><table><tbody>
+    <tr><td>Projekt</td><td><b>${esc(S.name||"–")}</b></td><td>Vorhaben</td><td>${S.art==="neubau"?"Neubau":"Umbau / Erneuerung"}</td></tr>
+    <tr><td>Luftmenge total</td><td><b>${num(R.V)} m³/h</b></td><td>Fläche erfasst</td><td>${num(R.A)} m²</td></tr>
+    <tr><td>Investition typisch</td><td><b>${chf(R.typ)}</b></td><td>Bandbreite</td><td>${chf(R.min)} – ${chf(R.max)}</td></tr>
+  </tbody></table>${R.warns.length?`<ul class="warns">${R.warns.map(w=>`<li>${esc(w)}</li>`).join("")}</ul>`:""}</div></section>`;
+  renderBelow(R);
+}
+function renderBelow(R){
+  $("#below").innerHTML=`
+  <section class="card"><h2>Übersicht Zonen</h2><div class="body"><div class="tw"><table style="min-width:640px">
+    <thead><tr><th>Zone</th><th>Methode</th><th class="num">Fläche m²</th><th class="num">Luftmenge m³/h</th><th class="num">m³/(h·m²)</th><th class="num">Luftwechsel 1/h</th></tr></thead><tbody>
+    ${R.zc.map(r=>{const v=VORL[r.z.vorlage];return `<tr><td>${esc(r.z.bez||v.l)}</td><td>${esc(METH[v.m])}</td><td class="num">${r.A?num(r.A):"–"}</td><td class="num">${num(r.V)}</td><td class="num">${r.A?num(r.spez,1):"–"}</td><td class="num">${r.lw?num(r.lw,1):"–"}</td></tr>`;}).join("")}
+    </tbody><tfoot><tr><td colspan="2">Total</td><td class="num">${num(R.A)}</td><td class="num">${num(R.V)}</td><td class="num">${R.A?num(R.V/R.A,1):"–"}</td><td></td></tr></tfoot></table></div>
+    <p class="hint">Der Luftwechsel wird mit der Raumhöhe der Zone berechnet (Standard 2.7 m) und dient nur zur Plausibilisierung.</p></div></section>
+
+  <section class="card"><details open><summary>So wird gerechnet</summary><div class="body formula">
+    <div><b>Wohnungen</b> (SIA 382/5): Zuluft = Zimmer × ${D.wohnen.zuluftZimmer} + Einzelzimmer × ${D.wohnen.zuluftEinzel} m³/h; Abluft = Küche ${D.wohnen.abluftKueche} + Bad × ${D.wohnen.abluftBad} + WC × ${D.wohnen.abluftWC} m³/h; massgebend ist der grössere Wert. Gewählte Abluftwerte liegen in den Bandbreiten der Norm (${esc(D.wohnen.bandbreiten)}).</div>
+    <div><b>Personenbezogen</b>: <code>V = Fläche / m² pro Person × m³/h pro Person</code></div>
+    <div><b>Flächenbezogen</b>: <code>V = Fläche × m³/(h·m²)</code> · <b>Luftwechsel</b>: <code>V = Fläche × Höhe × Luftwechsel</code></div>
+    <div><b>Investition</b>: <code>K = V × CHF pro m³/h × Grössenfaktor × Komplexität</code></div>
+    <p class="hint">Grössenfaktoren: ${D.groessenfaktor.map(g=>`${esc(g.l)} × ${num(g.f,2)}`).join(" · ")} <span class="tag ann">Annahme</span></p>
+  </div></details></section>
+
+  <section class="card"><details><summary>Grundlagen und Annahmen</summary><div class="body"><div class="tw"><table>
+    <thead><tr><th>Organisation</th><th>Dokument</th><th>Inhalt / Status</th><th>Geprüft</th></tr></thead><tbody>
+    ${Object.values(D.quellen).map(q=>`<tr><td>${esc(q.org)}</td><td>${q.link?`<a href="${esc(q.link)}" target="_blank" rel="noopener">${esc(q.titel)}</a>`:esc(q.titel)}</td><td>${esc(q.status)}</td><td>${esc(q.geprueft)}</td></tr>`).join("")}
+    </tbody></table></div>
+    <p class="hint"><span class="tag ver">verifiziert</span> Wohnen nach SIA 382/5, m³/h pro Person (SIA-2024-Grundlagenbericht, EnergieSchweiz), Garderobe/Dusche 8 m³/(h·m²).<br>
+    <span class="tag ann">Annahme</span> m² pro Person, übrige flächenbezogene Werte und Luftwechsel, alle Kostenkennwerte und Faktoren.</p></div></details></section>
+  <p class="hint" style="margin:0 0 30px;max-width:110ch">Die Schnellauslegung dient der Grobdimensionierung in der frühen Projektphase. Sie ersetzt weder die Luftmengenberechnung nach SIA 382/1 bzw. SIA 382/5 noch eine Kostenschätzung. Fachstand des Tools: ${esc(D.fachstand)}.</p>`;
+}
+function render(){ renderMain(); renderResult(); save(); }
+function update(){ renderResult(); save(); }
+
+/* ---------- Ereignisse ---------- */
+const zoneById=id=>S.zonen.find(z=>z.id===+id);
+document.addEventListener("input",e=>{
+  const t=e.target, d=t.dataset;
+  if(d.s){ S[d.s]=t.value; update(); return; }
+  if(d.zid){ const z=zoneById(d.zid); if(!z) return;
+    if(d.k==="vorlage"){ const n=zoneFrom(t.value,{id:z.id,bez:z.bez,flaeche:z.flaeche,hoehe:z.hoehe}); Object.assign(z,n); render(); return; }
+    if(d.k==="anlage"||d.k==="ral"){ z[d.k]=t.value; if(d.k==="ral") z.qP=""; render(); return; }
+    if(d.k==="bez"){ z.bez=t.value; update(); return; }
+    const val=t.value===""?"":+t.value;
+    if(d.k.startsWith("w.")) z.w[d.k.slice(2)]=val; else z[d.k]=val;
+    update(); return; }
+  if(d.kw){ anlCfg(d.kw).kw = t.value===""?null:+t.value; if(t.value==="") renderMain(); update(); refreshAnl(); return; }
+  if(d.komp){ anlCfg(d.komp).komp=t.value; render(); return; }
+});
+function refreshAnl(){ const R=calc(); document.querySelectorAll(".anl tbody tr").forEach((tr,i)=>{ const a=R.anl[i]; if(a) tr.lastElementChild.textContent=chf(a.typ); });
+  const f=document.querySelector(".anl tfoot"); if(f){ f.querySelector("td:last-child").textContent=chf(R.typ); f.children[0].children[2].textContent=`Bandbreite ${chf(R.min)} – ${chf(R.max)}`; } }
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return; const d=b.dataset;
+  if(d.art){ S.art=d.art; render(); return; }
+  if(d.add){ S.zonen.push(zoneFrom(d.add)); render(); const last=document.querySelectorAll(".zone"); const z=last[last.length-1]; if(z){ const i=z.querySelector('[data-k="flaeche"],[data-k="w.anz"],[data-k="manuell"]'); if(i) i.focus(); } return; }
+  if(d.del){ S.zonen=S.zonen.filter(z=>z.id!==+d.del); render(); return; }
+});
+function toast(t){ const el=document.createElement("div"); el.className="toast"; el.textContent=t; document.body.appendChild(el); setTimeout(()=>el.remove(),3500); }
+function readJSON(k){ try{ return JSON.parse(localStorage.getItem(k)||"null"); }catch(e){ return null; } }
+
+function handoff(){
+  const R=calc();
+  const zonen=R.zc.map(r=>{ const v=VORL[r.z.vorlage]; let hon=v.hon; if(r.z.anlage==="zuabk" && hon==="verwaltung") hon="verwaltung_klima";
+    if(v.id==="wohnung") hon=(+r.z.w.anz===1)?"efh":"mfh";
+    return {bezeichnung:r.z.bez||v.l, nutzung:hon, ebf_m2:r.A||null, volumen_m3:r.vol||null, luftmenge_m3h:Math.round(r.V)}; });
+  const data={version:1, source:"schnellauslegung", created:new Date().toISOString(), projekt:{name:S.name, art:S.art}, zonen, kosten_chf:Math.round(R.typ)||null};
+  try{ localStorage.setItem(HANDOFF, JSON.stringify(data)); }catch(e){ toast("Speichern im Browser nicht möglich."); return; }
+  toast("Übergeben. Im Honorarcheck «Aus Schnellauslegung übernehmen» wählen.");
+  if(confirm("Daten übergeben. Honorarcheck jetzt öffnen?")) location.href="../honorar/";
+}
+$("#toHon").onclick=handoff;
+$("#impQC").onclick=()=>{
+  const q=readJSON(QCKEY); if(!q||!q.A||!q.A.nutzung){ toast("Im Lüftungs-Quickcheck ist noch keine Nutzung erfasst."); return; }
+  const A=q.A; if(A.name) S.name=A.name; S.art=A.art==="neubau"?"neubau":"umbau";
+  const vid=D.quickcheck[A.nutzung]||"eigen", z=zoneFrom(vid);
+  if(z.anlage==="zuab" && (A.kuehl==="komfort"||A.kuehl==="prozess")) z.anlage="zuabk";
+  if(A.nutzung==="efh") z.w.anz=1;
+  const extra=[]; const nb=Array.isArray(A.neben)?A.neben:[];
+  if(nb.includes("kueche")||A.nutzung==="restaurant") extra.push(zoneFrom("kueche"));
+  if(nb.includes("garage")) extra.push(zoneFrom("garage"));
+  if(nb.includes("garderobe")) extra.push(zoneFrom("garderobe"));
+  if(nb.includes("labor")&&A.nutzung!=="labor") extra.push(zoneFrom("labor"));
+  const empty=S.zonen.length===1&&!S.zonen[0].flaeche&&!S.zonen[0].manuell;
+  S.zonen = empty ? [z,...extra] : S.zonen.concat([z,...extra]);
+  render(); toast("Aus Quickcheck übernommen – bitte Flächen ergänzen");
+};
+$("#btnPrint").onclick=()=>{ const t=document.title, dt=new Date().toISOString().slice(0,10);
+  const n=(S.name||"Projekt").replace(/[^\wÄÖÜäöüéèà -]/g,"").trim().replace(/\s+/g,"_");
+  document.title="Schnellauslegung_Lueftung_"+n+"_"+dt; window.addEventListener("afterprint",()=>{document.title=t;},{once:true});
+  document.querySelectorAll("details").forEach(x=>x.open=true); if(document.activeElement) document.activeElement.blur(); window.print(); };
+$("#btnReset").onclick=()=>{ if(!confirm("Alle Eingaben löschen und neu beginnen?")) return; S=defaults(); render(); window.scrollTo(0,0); };
+
+$("#fs").textContent=D.fachstand;
+render();
+})();
+</script>
+</body>
+</html>
