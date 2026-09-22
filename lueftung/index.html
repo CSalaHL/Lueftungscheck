@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lüftung & Klima – Projekt-Quickcheck</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="../icons/icon-192.png">
+<meta name="theme-color" content="#16202A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..750&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ECEFEE; --panel:#FFFFFF; --panel2:#F6F8F7; --ink:#16202A; --muted:#55626D; --line:#C8D0D5;
+  --req:#1D7446; --check:#9A6200; --none:#77828B; --crit:#B3261E;
+  --aul:#3C8B40; --zul:#2360A3; --abl:#C49A1E; --fol:#8A5A2B;
+  --focus:#2360A3; --chip:#E3E8EA;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#11171C; --panel:#192128; --panel2:#1F2830; --ink:#E4EAEE; --muted:#9BA8B2; --line:#2F3B45;
+    --req:#4FC38B; --check:#E2A73C; --none:#8E99A2; --crit:#F2766C;
+    --aul:#6CC070; --zul:#72A9E8; --abl:#E3BF4A; --fol:#C78E57; --focus:#72A9E8; --chip:#26313A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11171C; --panel:#192128; --panel2:#1F2830; --ink:#E4EAEE; --muted:#9BA8B2; --line:#2F3B45;
+  --req:#4FC38B; --check:#E2A73C; --none:#8E99A2; --crit:#F2766C;
+  --aul:#6CC070; --zul:#72A9E8; --abl:#E3BF4A; --fol:#C78E57; --focus:#72A9E8; --chip:#26313A;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;font-variant-numeric:tabular-nums}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+/* Header with duct schematic */
+header.top{padding:28px 0 18px}
+.duct{display:flex;gap:6px;margin-bottom:18px}
+.duct span{height:6px;flex:1;border-radius:3px}
+.duct .a{background:var(--aul)}.duct .z{background:var(--zul)}.duct .b{background:var(--abl)}.duct .f{background:var(--fol)}
+h1{font-stretch:118%;font-weight:720;font-size:clamp(1.7rem,3.6vw,2.6rem);line-height:1.08;margin:0 0 8px;letter-spacing:-.01em}
+.lead{color:var(--muted);max-width:68ch;margin:0}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn{border:1px solid var(--line);background:var(--panel);padding:9px 16px;border-radius:6px;cursor:pointer;font-weight:560}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--zul);border-color:var(--zul);color:#fff}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* Layout */
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px;align-items:start;padding-bottom:40px}
+@media (max-width:920px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px}
+
+/* Stepper */
+.steps{display:flex;list-style:none;margin:0;padding:16px 20px 0;gap:0;overflow-x:auto}
+.steps li{flex:1;min-width:92px;position:relative;padding-top:18px;font-size:.8rem;color:var(--muted)}
+.steps li::before{content:"";position:absolute;top:6px;left:0;right:0;height:3px;background:var(--line)}
+.steps li.done::before,.steps li.cur::before{background:var(--zul)}
+.steps li::after{content:"";position:absolute;top:1px;left:0;width:13px;height:13px;border-radius:50%;background:var(--panel);border:3px solid var(--line)}
+.steps li.done::after{background:var(--zul);border-color:var(--zul)}
+.steps li.cur::after{border-color:var(--zul)}
+.steps li.cur{color:var(--ink);font-weight:600}
+.steps button{all:unset;cursor:pointer}
+.steps button:focus-visible{outline:3px solid var(--focus)}
+
+.qhead{padding:18px 22px 4px}
+.qhead h2{margin:0;font-size:1.35rem;font-stretch:110%;font-weight:680}
+.qhead p{margin:4px 0 0;color:var(--muted);font-size:.93rem}
+.qs{padding:6px 22px 8px}
+.q{padding:16px 0;border-top:1px solid var(--line)}
+.q:first-child{border-top:0}
+.q.sub{margin-left:18px;padding-left:14px;border-left:3px solid var(--zul);border-top:0}
+.q label.ql,.q .ql{display:block;font-weight:600;margin-bottom:4px}
+.q .help{color:var(--muted);font-size:.87rem;margin:0 0 10px;max-width:70ch}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{border:1px solid var(--line);background:var(--panel2);padding:8px 13px;border-radius:6px;cursor:pointer;text-align:left;font-size:.93rem;line-height:1.3}
+.opt small{display:block;color:var(--muted);font-size:.78rem;margin-top:2px}
+.opt[aria-pressed="true"]{border-color:var(--zul);background:color-mix(in srgb,var(--zul) 13%,var(--panel));box-shadow:inset 0 0 0 1px var(--zul)}
+.opt.multi[aria-pressed="true"]::before{content:"✓ ";color:var(--zul);font-weight:700}
+input[type=text],select{width:100%;max-width:420px;padding:9px 11px;border:1px solid var(--line);border-radius:6px;background:var(--panel2)}
+.nav{display:flex;justify-content:space-between;gap:10px;padding:14px 22px 20px;border-top:1px solid var(--line)}
+.err{color:var(--crit);font-size:.9rem;padding:0 22px 10px}
+
+/* Decision tree */
+aside .card{padding:16px 16px 18px;position:sticky;top:calc(12px + env(safe-area-inset-top,0px))}
+aside h3{margin:0 0 2px;font-size:1rem;font-stretch:108%}
+aside .sub{color:var(--muted);font-size:.82rem;margin:0 0 12px}
+.tree,.tree ul{list-style:none;margin:0;padding:0}
+.tree ul{margin-left:9px;padding-left:12px;border-left:2px solid var(--line)}
+.tree li{position:relative;padding:3px 0 3px 12px;font-size:.84rem}
+.tree li::before{content:"";position:absolute;left:0;top:13px;width:8px;height:2px;background:var(--line)}
+.tree .k{color:var(--muted)}
+.tree .v{font-weight:600}
+.tree .sec{font-weight:680;font-size:.8rem;color:var(--zul);padding-left:0;margin-top:8px}
+.tree .sec::before{display:none}
+.tally{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.tally div{text-align:center;font-size:.72rem;color:var(--muted)}
+.tally b{display:block;font-size:1.25rem;font-stretch:115%;color:var(--ink)}
+.tally .r b{color:var(--req)}.tally .c b{color:var(--check)}.tally .x b{color:var(--crit)}.tally .n b{color:var(--none)}
+.empty{color:var(--muted);font-size:.85rem}
+
+/* Results */
+#result{padding-bottom:50px}
+.rhead{padding:22px}
+.rhead h2{margin:0 0 4px;font-size:1.6rem;font-stretch:115%}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--muted);font-size:.9rem}
+.meta b{color:var(--ink);font-weight:600}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;padding:0 22px 20px}
+.legend div{font-size:.82rem;color:var(--muted);line-height:1.35}
+.kind{display:inline-block;font-size:.74rem;font-weight:650;padding:2px 8px;border-radius:4px;border:1.5px solid currentColor;white-space:nowrap}
+.kind.gesetz{color:var(--ink);background:var(--chip)}
+.kind.norm{color:var(--zul)}
+.kind.label{color:var(--aul)}
+.kind.projekt{color:var(--check);border-style:dashed}
+.kind.empfehlung{color:var(--muted);border-style:dotted}
+.group{margin-top:26px}
+.group>h3{display:flex;align-items:center;gap:10px;font-size:1.15rem;font-stretch:112%;margin:0 0 10px}
+.dot{width:14px;height:14px;border-radius:50%;flex:none}
+.dot.req{background:var(--req)}.dot.check{background:var(--check)}.dot.none{background:transparent;border:2.5px solid var(--none)}.dot.crit{background:var(--crit);border-radius:2px;transform:rotate(45deg);width:12px;height:12px}
+.group>h3 .cnt{color:var(--muted);font-weight:500;font-size:.9rem}
+.f{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--none);border-radius:8px;padding:14px 18px;margin-bottom:10px}
+.f.req{border-left-color:var(--req)}.f.check{border-left-color:var(--check)}.f.crit{border-left-color:var(--crit)}
+.f h4{margin:0 0 6px;font-size:1.03rem;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.f dl{display:grid;grid-template-columns:130px minmax(0,1fr);gap:4px 14px;margin:8px 0 0;font-size:.92rem}
+@media (max-width:560px){.f dl{grid-template-columns:1fr}.f dt{margin-top:6px}}
+.f dt{color:var(--muted)}
+.f dd{margin:0;max-width:75ch}
+.f ul{margin:0;padding-left:18px}
+.f .xref{color:var(--muted)}
+.nonelist{display:flex;flex-wrap:wrap;gap:8px}
+.nonelist span{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 11px;font-size:.88rem}
+.nonelist span small{color:var(--muted)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:640px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--panel2);font-weight:650}
+.ok{color:var(--req);font-weight:600}.warn{color:var(--check);font-weight:600}
+.disclaimer{margin-top:26px;padding:16px 18px;border:1px dashed var(--line);border-radius:8px;color:var(--muted);font-size:.87rem;max-width:90ch}
+.hidden{display:none!important}
+.home{display:inline-block;margin-bottom:14px;color:var(--zul);font-weight:600;text-decoration:none;font-size:.92rem}
+.home::before{content:"‹ "}
+.home:hover{text-decoration:underline}
+@media print{.home{display:none}}
+.fachstand{margin:10px 0 0;font-size:.9rem;color:var(--muted)}.fachstand b{color:var(--ink)}
+.fazit{margin-top:22px;padding:0 0 6px}
+.fzhead{padding:18px 22px 10px}
+.fzhead h3{margin:0 0 4px;font-size:1.25rem;font-stretch:112%}
+.kurz{margin:0;font-weight:600;max-width:80ch}
+.frow{display:grid;grid-template-columns:150px minmax(0,1.1fr) minmax(0,1.2fr);gap:14px;padding:11px 22px;border-top:1px solid var(--line);font-size:.93rem}
+.fth{font-size:.8rem;color:var(--muted);font-weight:600;background:var(--panel2)}
+.ft{font-weight:650}
+.fv{display:flex;gap:9px;align-items:flex-start}.fv .dot{margin-top:4px}
+.fs{color:var(--muted)}
+.fznote{margin:0;padding:10px 22px 12px;border-top:1px solid var(--line);font-size:.8rem;color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:700px){.frow{grid-template-columns:1fr;gap:4px}.fth{display:none}}
+@media print{
+  body{background:#fff;color:#000}
+  header .toolbar,#wizard,aside,.noprint{display:none!important}
+  .f,.card,.tablewrap{break-inside:avoid;border-color:#999}
+  .grid{display:block}
+}
+@media (prefers-reduced-motion:no-preference){.opt{transition:background .12s,border-color .12s}}
+</style>
+</head>
+<body>
+<header class="top wrap">
+  <a class="home" href="../">Alle Tools</a>
+  <div class="duct" aria-hidden="true"><span class="a"></span><span class="z"></span><span class="b"></span><span class="f"></span></div>
+  <h1>Lüftung & Klima – Projekt-Quickcheck</h1>
+  <p class="lead">Erstbeurteilung für Bauprojekte in der Schweiz: Welche lüftungs- und klimatechnischen Anlagen und Massnahmen sind erforderlich, möglicherweise erforderlich oder besonders zu prüfen? Kein Fachplanungs- oder Normennachweis.</p>
+  <p class="fachstand">Fachstand des Tools: <b>22.09.2026</b></p>
+  <div class="toolbar">
+    <button class="btn" id="btnReset" type="button">Neues Projekt beginnen</button>
+    <button class="btn" id="btnTheme" type="button" aria-label="Hell/Dunkel umschalten">Hell / Dunkel</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid" id="wizardGrid">
+    <section id="wizard" class="card" aria-live="polite">
+      <ol class="steps" id="steps"></ol>
+      <div class="qhead"><h2 id="secTitle"></h2><p id="secLead"></p></div>
+      <div class="qs" id="qs"></div>
+      <div class="err" id="err" role="alert"></div>
+      <div class="nav">
+        <button class="btn" id="btnBack" type="button">Zurück</button>
+        <button class="btn primary" id="btnNext" type="button">Weiter</button>
+      </div>
+    </section>
+    <aside>
+      <div class="card">
+        <h3>Entscheidungspfad</h3>
+        <p class="sub">Wächst mit Ihren Antworten. Eingerückte Fragen wurden durch die übergeordnete Antwort ausgelöst.</p>
+        <div id="tree"></div>
+        <div class="tally" id="tally"></div>
+      </div>
+    </aside>
+  </div>
+
+  <section id="result" class="hidden"></section>
+</main>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- Grundlagenkatalog (jede Grundlage mit eigener Kategorie) ---------- */
+const REF = {
+  sia3821:{t:"SIA 382/1:2025 Mechanische Lüftung in Gebäuden – Grundlagen und Anforderungen",k:"norm"},
+  sia3825:{t:"SIA 382/5 Mechanische Lüftung in Wohngebäuden",k:"norm"},
+  sia180:{t:"SIA 180 Wärmeschutz, Feuchteschutz und Raumklima in Gebäuden",k:"norm"},
+  sia181:{t:"SIA 181 Schallschutz im Hochbau (Geräusche haustechnischer Anlagen)",k:"norm"},
+  sia2024:{t:"Merkblatt SIA 2024 Raumnutzungsdaten für Energie- und Gebäudetechnik",k:"norm"},
+  sia2028:{t:"Merkblatt SIA 2028 Klimadaten für Bauphysik, Energie- und Gebäudetechnik",k:"norm"},
+  sia3802:{t:"SIA 380/2:2022 Energetische Berechnungen von Gebäuden – dynamisches Verfahren (Kühl-/Leistungsbedarf)",k:"norm"},
+  en167981:{t:"SN EN 16798-1 Energetische Bewertung von Gebäuden – Eingangsparameter für das Innenraumklima",k:"norm"},
+  en167983:{t:"SN EN 16798-3 Lüftung von Nichtwohngebäuden – Leistungsanforderungen",k:"norm"},
+  en16282:{t:"SN EN 16282 Einrichtungen in gewerblichen Küchen – Elemente zur Be- und Entlüftung",k:"norm"},
+  en14175:{t:"SN EN 14175 Abzüge (Laborabzüge)",k:"norm"},
+  iso14644:{t:"SN EN ISO 14644 Reinräume und zugehörige Reinraumbereiche",k:"norm"},
+  vdi2089:{t:"VDI 2089 Blatt 1 Technische Gebäudeausrüstung von Schwimmbädern – Hallenbäder (in der Schweiz als Stand der Technik angewendet)",k:"norm"},
+  swki104:{t:"SWKI VA104-01 Hygieneanforderungen an raumlufttechnische Anlagen und Geräte",k:"norm"},
+  swki105:{t:"SWKI VA105-01 Raumlufttechnische Anlagen in medizinisch genutzten Räumen",k:"norm"},
+  kenr:{t:"Kantonales Energiegesetz / Energieverordnung (Basis MuKEn 2014; MuKEn 2025 in kantonaler Einführung)",k:"gesetz"},
+  en4:{t:"EnDK-Vollzugshilfe EN-4 Lüftungstechnische Anlagen",k:"gesetz"},
+  en5:{t:"EnDK-Vollzugshilfe EN-5 Kühlen, Be- und Entfeuchten",k:"gesetz"},
+  enev:{t:"Energieeffizienzverordnung EnEV (Bund) – Ökodesign-Anforderungen an Lüftungsgeräte gemäss VO (EU) 1253/2014",k:"gesetz"},
+  argv3:{t:"ArGV 3 Art. 16 (Raumklima) und Art. 17 (Lüftung), mit Wegleitung SECO",k:"gesetz"},
+  argv18:{t:"ArGV 3 Art. 18 (Luftverunreinigung)",k:"gesetz"},
+  vuv44:{t:"VUV Art. 44 (gesundheitsgefährdende Stoffe) und Suva-Grenzwerte am Arbeitsplatz",k:"gesetz"},
+  vkf2515:{t:"VKF-Brandschutzrichtlinie 25-15 Lufttechnische Anlagen (BSV 2015)",k:"gesetz"},
+  vkf2115:{t:"VKF-Brandschutzrichtlinie 21-15 Rauch- und Wärmeabzugsanlagen (BSV 2015)",k:"gesetz"},
+  vkf2415:{t:"VKF-Brandschutzrichtlinie 24-15 Wärmetechnische Anlagen (BSV 2015)",k:"gesetz"},
+  lsv31:{t:"Lärmschutz-Verordnung LSV Art. 31 (Baubewilligungen in lärmbelasteten Gebieten)",k:"gesetz"},
+  lsv7:{t:"Lärmschutz-Verordnung LSV Art. 7 und Anhang 6 (neue ortsfeste Anlagen, Planungswerte)",k:"gesetz"},
+  lrv:{t:"Luftreinhalte-Verordnung LRV Art. 6 (Erfassung und Ableitung von Emissionen)",k:"gesetz"},
+  stsv:{t:"Strahlenschutzverordnung StSV, Radon (Referenzwert 300 Bq/m³)",k:"gesetz"},
+  chemrrv:{t:"ChemRRV Anhang 2.10 Kältemittel",k:"gesetz"},
+  parv:{t:"Bundesgesetz und Verordnung zum Schutz vor Passivrauchen (PaRV)",k:"gesetz"},
+  tws:{t:"BABS Technische Weisungen für Schutzräume (TWS 2017), Zivilschutzgesetzgebung",k:"gesetz"},
+  esv:{t:"Einschliessungsverordnung ESV (Tätigkeiten mit Organismen)",k:"gesetz"},
+  bauav:{t:"Bauarbeitenverordnung BauAV Art. 3 (Ermittlung von Gefahren, z. B. Asbest)",k:"gesetz"},
+  kbau:{t:"Kantonales Bau- und Planungsrecht, kommunale Bauordnung",k:"gesetz"},
+  mipr:{t:"Minergie Produktreglement Gebäudestandards Minergie/-P/-A (aktuelle Fassung 2026), Kapitel Lufterneuerung",k:"label"},
+  miswp:{t:"Minergie Anwendungshilfe Sommerlicher Wärmeschutz 2026.1",k:"label"},
+  milu:{t:"Minergie-P/-A: Luftdichtheitsmessung (Richtlinie RiLuMi 2026.1)",k:"label"},
+  eco:{t:"Produktreglement Zusatz ECO – Raumluftmessungen (Formaldehyd, TVOC, Radon)",k:"label"}
+};
+const KIND = {
+  gesetz:{l:"Gesetzlich",d:"Vorgabe aus Gesetz, Verordnung oder kantonalem Energie-/Baurecht (inkl. verbindlich erklärte VKF-Brandschutzvorschriften)."},
+  norm:{l:"Normativ",d:"Anforderung aus einer anwendbaren Norm oder Richtlinie (SIA, SN EN, SWKI, VDI)."},
+  label:{l:"Label",d:"Anforderung nur bei angestrebter Zertifizierung (z. B. Minergie, ECO)."},
+  projekt:{l:"Projektspezifisch",d:"Kann aufgrund Nutzung oder Randbedingungen erforderlich werden – Nachweis nötig."},
+  empfehlung:{l:"Fachliche Empfehlung",d:"Keine zwingende Vorschrift, aus planerischer Sicht sinnvoll."}
+};
+
+/* ---------- Fragen ---------- */
+const YN = [{v:"ja",l:"Ja"},{v:"nein",l:"Nein"}];
+const KANTONE = ["AG","AI","AR","BE","BL","BS","FR","GE","GL","GR","JU","LU","NE","NW","OW","SG","SH","SO","SZ","TG","TI","UR","VD","VS","ZG","ZH"];
+const NUTZ = [
+ {v:"mfh",l:"Wohnen MFH",h:"Kat. I"},{v:"efh",l:"Wohnen EFH",h:"Kat. II"},{v:"verwaltung",l:"Verwaltung / Büro",h:"Kat. III"},
+ {v:"schule",l:"Schule",h:"Kat. IV"},{v:"verkauf",l:"Verkauf",h:"Kat. V"},{v:"restaurant",l:"Restaurant",h:"Kat. VI"},
+ {v:"versammlung",l:"Versammlung",h:"Kat. VII"},{v:"spital",l:"Spital / Pflege",h:"Kat. VIII"},{v:"industrie",l:"Industrie / Gewerbe",h:"Kat. IX"},
+ {v:"lager",l:"Lager",h:"Kat. X"},{v:"sport",l:"Sportbauten",h:"Kat. XI"},{v:"hallenbad",l:"Hallenbad",h:"Kat. XII"},
+ {v:"labor",l:"Labor / Forschung",h:"keine SIA-380/1-Kategorie"}
+];
+const nutzLabel = v => (NUTZ.find(n=>n.v===v)||{}).l || "–";
+const isWohnen = A => A.nutzung==="mfh"||A.nutzung==="efh";
+const has = (A,id,v) => Array.isArray(A[id]) && A[id].includes(v);
+
+const SECTIONS = [
+ {id:"projekt",t:"Projekt",lead:"Rahmen des Vorhabens. Bestand und Neubau lösen unterschiedliche Fragen aus."},
+ {id:"nutzung",t:"Nutzung",lead:"Hauptnutzung gemäss Gebäudekategorie und besondere Nebennutzungen."},
+ {id:"label",t:"Label",lead:"Label-Anforderungen werden getrennt von Gesetz und Norm ausgewiesen."},
+ {id:"lasten",t:"Belegung & Lasten",lead:"Personen, interne Lasten, Fenster und Umgebung."},
+ {id:"feuchte",t:"Feuchte & Schadstoffe",lead:"Feuchte-, Schadstoff- und Geruchslasten sowie Prozesse."},
+ {id:"klima",t:"Raumklima & Hygiene",lead:"Anforderungen an Temperatur, Feuchte, Hygiene und Kühlung."},
+ {id:"koord",t:"Koordination",lead:"Frühe Fragen, die Platz, Fassade und Akustik bestimmen."}
+];
+
+const Q = [
+ {id:"name",s:"projekt",type:"text",l:"Projektbezeichnung",help:"Optional, erscheint im Resultat.",opt:true},
+ {id:"art",s:"projekt",type:"single",l:"Art des Vorhabens",o:[{v:"neubau",l:"Neubau"},{v:"umbau",l:"Umbau / Erneuerung"},{v:"umnutzung",l:"Umnutzung"},{v:"ersatz",l:"Ersatz Lüftungs-/Klimaanlage"}]},
+ {id:"baujahr",s:"projekt",type:"single",p:"art",show:A=>A.art&&A.art!=="neubau",l:"Baujahr des Bestandes",o:[{v:"vor1990",l:"vor 1990"},{v:"1990",l:"1990–1999"},{v:"ab2000",l:"ab 2000"}]},
+ {id:"denkmal",s:"projekt",type:"single",p:"art",show:A=>A.art&&A.art!=="neubau",l:"Denkmalschutz oder Inventar?",o:YN},
+ {id:"bestAnl",s:"projekt",type:"single",p:"art",show:A=>A.art&&A.art!=="neubau",l:"Bestehende Lüftungs-/Klimaanlagen vorhanden?",o:[{v:"ja",l:"Ja, vorhanden"},{v:"nein",l:"Nein"},{v:"unklar",l:"Unklar"}]},
+ {id:"kanton",s:"projekt",type:"select",l:"Standort (Kanton)",help:"Das Energierecht ist kantonal. Der Umsetzungsstand der MuKEn unterscheidet sich.",o:KANTONE.map(k=>({v:k,l:k}))},
+ {id:"hoehe",s:"projekt",type:"single",l:"Gebäudehöhe (VKF-Einteilung)",o:[{v:"gering",l:"geringe Höhe",h:"bis 11 m"},{v:"mittel",l:"mittlere Höhe",h:"bis 30 m"},{v:"hoch",l:"Hochhaus",h:"über 30 m"}]},
+
+ {id:"nutzung",s:"nutzung",type:"single",l:"Hauptnutzung",o:NUTZ.map(n=>({v:n.v,l:n.l,h:n.h}))},
+ {id:"groesse",s:"nutzung",type:"single",l:"Energiebezugsfläche (ungefähr)",o:[{v:"s",l:"unter 500 m²"},{v:"m",l:"500–2000 m²"},{v:"l",l:"2000–10 000 m²"},{v:"xl",l:"über 10 000 m²"}]},
+ {id:"arbeit",s:"nutzung",type:"single",p:"nutzung",show:A=>A.nutzung&&!isWohnen(A),l:"Ständige Arbeitsplätze von Arbeitnehmenden?",help:"Löst die Anforderungen des Arbeitsgesetzes (ArGV 3) aus.",o:YN},
+ {id:"lebensm",s:"nutzung",type:"single",p:"nutzung",show:A=>A.nutzung==="verkauf",l:"Lebensmittelverkauf mit Verkaufsfläche bis 2000 m²?",help:"Relevant für eine Ausnahmeregel bei Minergie.",o:YN},
+ {id:"fumoir",s:"nutzung",type:"single",p:"nutzung",show:A=>A.nutzung==="restaurant",l:"Fumoir geplant?",o:YN},
+ {id:"nassInnen",s:"nutzung",type:"single",p:"nutzung",show:A=>isWohnen(A),l:"Innenliegende Bäder/WC ohne Fenster?",o:YN},
+ {id:"feuer",s:"nutzung",type:"single",p:"nutzung",show:A=>isWohnen(A),l:"Raumluftabhängige Feuerstätte (Cheminée, Ofen) geplant?",o:YN},
+ {id:"neben",s:"nutzung",type:"multi",opt:true,l:"Nebennutzungen",help:"Mehrfachauswahl. Leer lassen, wenn keine zutreffen.",o:[
+   {v:"garage",l:"Tiefgarage / Einstellhalle"},{v:"kueche",l:"Gewerbliche Küche"},{v:"labor",l:"Labor"},{v:"schutzraum",l:"Schutzraum"},
+   {v:"server",l:"Serverraum / IT"},{v:"werkstatt",l:"Werkstatt mit Emissionen"},{v:"garderobe",l:"Garderoben / Duschen"},{v:"atrium",l:"Atrium / Luftraum über mehrere Geschosse"}]},
+ {id:"kuecheArt",s:"nutzung",type:"single",p:"neben",show:A=>has(A,"neben","kueche")||A.nutzung==="restaurant",l:"Art der Küche",o:[{v:"aufwaerm",l:"Aufwärm- / Regenerierküche"},{v:"voll",l:"Vollküche"},{v:"gross",l:"Grossküche / Kantine"}]},
+ {id:"laborArt",s:"nutzung",type:"multi",p:"neben",show:A=>has(A,"neben","labor")||A.nutzung==="labor",l:"Art des Labors",o:[{v:"chem",l:"Chemisch (Gefahrstoffe)"},{v:"bio",l:"Biologisch (ab Stufe 2)"},{v:"phys",l:"Physikalisch / Elektronik"}]},
+
+ {id:"label",s:"label",type:"single",l:"Angestrebtes Gebäudelabel",o:[{v:"keins",l:"Kein Label"},{v:"minergie",l:"Minergie"},{v:"minergie-p",l:"Minergie-P"},{v:"minergie-a",l:"Minergie-A"}]},
+ {id:"eco",s:"label",type:"single",p:"label",show:A=>A.label&&A.label!=="keins",l:"Mit Zusatz ECO?",o:YN},
+
+ {id:"personen",s:"lasten",type:"single",l:"Personenbelegung",o:[{v:"normal",l:"Normal",h:"z. B. Büro, Wohnen"},{v:"hoch",l:"Hoch",h:"z. B. Schulzimmer, Sitzungen"},{v:"sehrhoch",l:"Sehr hoch",h:"z. B. Saal, Gastraum"}]},
+ {id:"lasten",s:"lasten",type:"single",l:"Interne Wärmelasten (Geräte, Beleuchtung, Prozesse)",o:[{v:"gering",l:"Gering"},{v:"mittel",l:"Mittel"},{v:"hoch",l:"Hoch"}]},
+ {id:"glas",s:"lasten",type:"single",l:"Verglasungsanteil der Fassade",o:[{v:"normal",l:"Üblich"},{v:"hoch",l:"Hoch",h:"grossflächig verglast"}]},
+ {id:"fenster",s:"lasten",type:"single",l:"Öffenbare Fenster in Aufenthaltsräumen",o:[{v:"alle",l:"In allen Räumen"},{v:"einzelne",l:"Einzelne Räume ohne"},{v:"gross",l:"Grössere Bereiche ohne",h:"innenliegend oder Festverglasung"}]},
+ {id:"laerm",s:"lasten",type:"single",l:"Aussenlärm",o:[{v:"normal",l:"Unauffällig"},{v:"erhoeht",l:"Erhöht"},{v:"hoch",l:"Hoch",h:"Immissionsgrenzwerte erreicht/überschritten"}]},
+ {id:"aul",s:"lasten",type:"single",l:"Qualität der Aussenluft",o:[{v:"normal",l:"Unauffällig"},{v:"belastet",l:"Belastet",h:"Verkehr, Industrie"}]},
+
+ {id:"feuchte",s:"feuchte",type:"single",l:"Feuchtelasten",o:[{v:"normal",l:"Üblich"},{v:"erhoeht",l:"Erhöht",h:"Duschen, Küchen"},{v:"sehrhoch",l:"Sehr hoch",h:"Bad, Wäscherei, Prozess"}]},
+ {id:"schad",s:"feuchte",type:"multi",opt:true,l:"Schadstofflasten in der Raumluft",help:"Leer lassen, wenn keine.",o:[{v:"chem",l:"Lösemittel / Chemikalien"},{v:"staub",l:"Stäube / Rauch"},{v:"gase",l:"Abgase / Gase"}]},
+ {id:"geruch",s:"feuchte",type:"single",l:"Gerüche",o:[{v:"keine",l:"Keine besonderen"},{v:"moderat",l:"Moderat"},{v:"stark",l:"Stark"}]},
+ {id:"prozess",s:"feuchte",type:"single",l:"Prozessabluft (Maschinen, Anlagen)",o:[{v:"nein",l:"Nein"},{v:"ja",l:"Ja"},{v:"offen",l:"Noch offen"}]},
+ {id:"erde",s:"feuchte",type:"single",l:"Aufenthaltsräume mit Erdberührung?",help:"Relevant für den Radonschutz.",o:YN},
+
+ {id:"temp",s:"klima",type:"single",l:"Anforderung an die Raumtemperatur",o:[{v:"komfort",l:"Komfort",h:"übliche Behaglichkeit"},{v:"eng",l:"Enge Toleranz"},{v:"prozess",l:"Prozess / Produkt"}]},
+ {id:"rh",s:"klima",type:"single",l:"Anforderung an die Luftfeuchte",o:[{v:"keine",l:"Keine besondere"},{v:"min",l:"Mindestfeuchte gewünscht"},{v:"band",l:"Enges Feuchteband",h:"z. B. Archiv, Museum, Prozess"}]},
+ {id:"hyg",s:"klima",type:"single",l:"Hygieneanforderungen",o:[{v:"normal",l:"Üblich"},{v:"erhoeht",l:"Erhöht",h:"Pflege, Lebensmittel"},{v:"sehrhoch",l:"Sehr hoch",h:"OP, Reinraum"}]},
+ {id:"kuehl",s:"klima",type:"single",l:"Kühlung durch die Bauherrschaft vorgesehen?",o:[{v:"nein",l:"Nein"},{v:"offen",l:"Offen"},{v:"komfort",l:"Ja, Komfort"},{v:"prozess",l:"Ja, Prozess / IT"}]},
+
+ {id:"zentrale",s:"koord",type:"single",l:"Platz für Technikzentrale und Steigzonen",o:[{v:"ja",l:"Reserviert"},{v:"nein",l:"Noch nicht definiert"}]},
+ {id:"fuehrung",s:"koord",type:"single",l:"Aussen- und Fortluftführung",o:[{v:"dach",l:"Über Dach"},{v:"fassade",l:"Über Fassade"},{v:"unklar",l:"Noch unklar"}]},
+ {id:"aussen",s:"koord",type:"single",l:"Aussenaufgestellte Geräte (Rückkühler, Wärmepumpe)?",o:[{v:"ja",l:"Ja"},{v:"nein",l:"Nein"},{v:"offen",l:"Offen"}]}
+];
+Q.forEach(q=>{ if(!q.show) q.show=()=>true; });
+
+/* ---------- Zustand ---------- */
+const KEY="lk-quickcheck-v1";
+let A={}, step=0, showResult=false;
+try{ const s=JSON.parse(localStorage.getItem(KEY)||"null"); if(s&&typeof s==="object"){A=s.A||{};step=s.step||0;showResult=!!s.r;} }catch(e){}
+function save(){ try{localStorage.setItem(KEY,JSON.stringify({A,step,r:showResult}));}catch(e){} }
+function prune(){ let ch=true; while(ch){ ch=false; Q.forEach(q=>{ if(A[q.id]!==undefined && !q.show(A)){ delete A[q.id]; ch=true; } }); } }
+const visible = s => Q.filter(q=>q.s===s && q.show(A));
+const missing = s => visible(s).filter(q=>!q.opt && (A[q.id]===undefined || A[q.id]===""||(Array.isArray(A[q.id])&&!A[q.id].length&&q.type!=="multi")));
+
+/* ---------- Bewertungslogik ---------- */
+function evaluate(A){
+  const F=[];
+  const W=isWohnen(A), N=A.nutzung, best=A.art&&A.art!=="neubau";
+  const lab=A.label&&A.label!=="keins", labP=A.label==="minergie-p"||A.label==="minergie-a";
+  const work = !W && A.arbeit==="ja";
+  const nb = v=>has(A,"neben",v);
+  const kueche = nb("kueche")||N==="restaurant";
+  const laborChem = has(A,"laborArt","chem"), laborBio=has(A,"laborArt","bio");
+  const schad = Array.isArray(A.schad)&&A.schad.length>0;
+  const add=(g,k,title,reason,trig,refs,next)=>{
+    // Schutzregel: "erforderlich" nur mit Gesetz, Norm oder Label als Grundlage
+    if(g==="req" && !["gesetz","norm","label"].includes(k)) g="check";
+    F.push({g,k,title,reason,trig:trig.filter(Boolean),refs,next});
+  };
+  const none=(title,why)=>F.push({g:"none",title,why});
+
+  /* Mechanische Lüftung – Einstufung */
+  let mech="none", mechWhy=[];
+  const minergieExc = lab && best && A.baujahr!=="ab2000" && ["verwaltung","verkauf","versammlung","industrie","lager","sport"].includes(N);
+  const minergieLM = lab && N==="verkauf" && A.lebensm==="ja";
+  if(lab && !minergieExc && !minergieLM){mech="req";mechWhy.push("Minergie");}
+  if(A.fenster&&A.fenster!=="alle"){mech="req";mechWhy.push("Räume ohne öffenbare Fenster");}
+  if(["spital","hallenbad"].includes(N)){mech="req";mechWhy.push(nutzLabel(N));}
+  if(kueche){mech="req";mechWhy.push("gewerbliche Küche");}
+  if(laborChem||laborBio){mech="req";mechWhy.push("Labor");}
+  if(mech==="none"){
+    if(A.personen!=="normal"||["schule","versammlung","restaurant"].includes(N)){mech="check";mechWhy.push("hohe Personenbelegung");}
+    else if(W && !best){mech="check";mechWhy.push("Wohnneubau");}
+    else if(A.laerm!=="normal"||A.aul==="belastet"){mech="check";mechWhy.push("Umgebungsbedingungen");}
+    else if(!["lager","industrie"].includes(N)){mech="check";mechWhy.push("Raumluftqualität");}
+  }
+
+  /* 1 Lufterneuerung */
+  if(lab){
+    if(minergieExc) add("check","label","Kontrollierte Aussenluftzufuhr – bei dieser Minergie-Erneuerung keine Voraussetzung",
+      "Das Produktreglement setzt bei Erneuerungen von Bauten mit Baujahr vor 2000 in dieser Kategorie keine kontrollierte Aussenluftzufuhr voraus, empfiehlt sie jedoch. Ausnahmeregel in der aktuellen Fassung verifizieren.",
+      ["Label "+A.label,"Bestand vor 2000",nutzLabel(N)],["mipr","sia3821"],"Lüftungskonzept trotzdem festlegen; Entscheid mit Bauherrschaft dokumentieren.");
+    else if(minergieLM) add("check","label","Kontrollierte Aussenluftzufuhr – Ausnahme Lebensmittelverkauf prüfen",
+      "Für Lebensmittel-Verkaufsläden bis 2000 m² Verkaufsfläche sieht das Produktreglement keine kontrollierbare Aussenluftzufuhr vor, da Personenverkehr und Warenumschlag in der Regel genügend Luftaustausch bewirken. Regel in der aktuellen Fassung verifizieren.",
+      ["Label "+A.label,"Lebensmittelverkauf ≤ 2000 m²"],["mipr","sia3821"],"Arbeitsplatzanforderungen (ArGV 3) unabhängig davon prüfen.");
+    else add("req","label","Kontrollierte Lufterneuerung (automatische Aussenluftzufuhr)",
+      "Minergie setzt für alle Gebäudekategorien eine automatische, kontrollierte Lufterneuerung voraus. Die Auslegung erfolgt nach den Schweizer Normen.",
+      ["Label "+A.label],["mipr",W?"sia3825":"sia3821","sia2024"],"Lüftungssystem wählen (Komfortlüftung, Einzelraumgeräte, zentrale Anlage) und Luftmengen nach "+(W?"SIA 382/5":"SIA 382/1:2025")+" bestimmen.");
+  }
+  if(A.fenster&&A.fenster!=="alle"){
+    add("req",work?"gesetz":"norm","Mechanische Lüftung für Räume ohne öffenbare Fenster",
+      work?"An Arbeitsplätzen ist nach Arbeitsgesetz eine ausreichende natürliche oder künstliche Lüftung vorgeschrieben. Ohne öffenbare Fenster ist nur künstliche Lüftung möglich."
+          :"Die hygienisch notwendige Lufterneuerung nach Norm kann ohne öffenbare Fenster nur mechanisch sichergestellt werden.",
+      [A.fenster==="gross"?"grössere Bereiche ohne Fenster":"einzelne Räume ohne Fenster"],
+      work?["argv3","sia3821","en167981"]:[W?"sia3825":"sia3821","en167981"],
+      "Betroffene Räume erfassen und Aussenluftvolumenströme bestimmen.");
+  }
+  if(work){
+    add("req","gesetz","Lufterneuerung und Raumklima an Arbeitsplätzen sicherstellen",
+      "Das Arbeitsgesetz verlangt eine der Nutzung angemessene Lüftung (natürlich oder künstlich) und ein gesundheitlich zuträgliches Raumklima. Das System ist frei wählbar.",
+      ["ständige Arbeitsplätze"],["argv3","sia3821","sia2024"],"Lüftungs- und Raumklimakonzept je Raumgruppe festlegen; Wegleitung SECO beiziehen.");
+  }
+  if(!lab && (!A.fenster||A.fenster==="alle")){
+    if(A.personen!=="normal"||["schule","versammlung","restaurant"].includes(N))
+      add("check","projekt","Mechanische Lüftung wegen hoher Personenbelegung",
+        "Bei hoher Belegung erreicht reine Fensterlüftung die Raumluftqualität (CO₂) nach SIA 382/1 bzw. SN EN 16798-1 häufig nicht dauerhaft. Ob eine Anlage nötig ist, zeigt der Vergleich der Lüftungsvarianten.",
+        [A.personen!=="normal"?"Belegung "+A.personen:"",nutzLabel(N)],["sia3821","en167981","sia2024"],
+        "Aussenluftbedarf nach SIA 382/1:2025 mit Personenbelegung nach SIA 2024 bestimmen; Fenster-, Hybrid- und mechanische Lüftung vergleichen.");
+    else if(W)
+      add("check","empfehlung","Lüftungskonzept Wohnen – Komfortlüftung empfehlenswert",
+        "Ohne Label ist keine mechanische Lüftung vorgeschrieben. Bei dichter Gebäudehülle muss der Feuchteschutz und die Raumluftqualität trotzdem sichergestellt werden. Wird mechanisch gelüftet, gelten die Anforderungen von SIA 382/5.",
+        [best?"Erneuerung Wohnbau":"Wohnneubau"],["sia180","sia3825"],"Lüftungskonzept festlegen (Fenster, Abluft mit Nachströmung, Komfortlüftung) und mit Bauherrschaft entscheiden.");
+    else if(mech!=="none")
+      add("check","empfehlung","Lüftungskonzept festlegen",
+        "Kein zwingender Auslöser für eine mechanische Anlage erkannt. Das Konzept zur Lufterneuerung sollte trotzdem früh festgelegt werden.",
+        [nutzLabel(N)],["sia3821","sia180"],"Varianten Fensterlüftung / mechanisch grob vergleichen.");
+  }
+
+  /* 2 WRG */
+  if(mech!=="none"){
+    add(mech==="req"?"req":"check","gesetz","Wärmerückgewinnung bei Anlagen mit Aussen- und Fortluft",
+      (mech==="req"?"Eine lüftungstechnische Anlage ist aufgrund der Angaben zu erwarten. ":"Falls eine Anlage mit Zu- und Abluft erstellt wird: ")+
+      "Das kantonale Energierecht (MuKEn-Basismodul) verlangt dafür grundsätzlich eine Wärmerückgewinnung. Bidirektionale Lüftungsgeräte müssen zudem die Ökodesign-Anforderungen der EnEV erfüllen.",
+      mechWhy,["kenr","en4","enev","sia3821"],"Ausnahmetatbestände im kantonalen Erlass prüfen; WRG-Kennwerte und SFP nach SIA 382/1:2025 festlegen. Reine Abluftanlagen separat beurteilen.");
+    add(mech==="req"?"req":"check","norm","Hygienegerechte Planung, Ausführung und Betrieb der RLT-Anlagen",
+      "Raumlufttechnische Anlagen sind nach den Hygieneanforderungen zu planen und im Betrieb periodisch zu prüfen.",
+      mechWhy,["swki104","sia3821"],"Hygieneanforderungen in Ausschreibung und Betriebskonzept aufnehmen.");
+    add(mech==="req"?"req":"check","gesetz","Brandschutz der lufttechnischen Anlagen",
+      "Lufttechnische Anlagen unterliegen den verbindlichen VKF-Brandschutzvorschriften (Abschottungen, Brandschutzklappen, Materialisierung).",
+      mechWhy,["vkf2515"],"Mit Brandschutzkonzept und Brandabschnitten abgleichen.");
+  }
+
+  /* 3 Sommerlicher Wärmeschutz / Kühlung */
+  add(best?"check":"req","gesetz","Nachweis sommerlicher Wärmeschutz",
+    best?"Bei Erneuerungen gelten die Anforderungen für die veränderten Bauteile gemäss kantonalem Energierecht.":"Das kantonale Energierecht verlangt für Neubauten einen Nachweis des sommerlichen Wärmeschutzes; Grundlage ist SIA 180.",
+    [best?"Bestand":"Neubau"],["kenr","sia180","sia2028"],"Nachweisverfahren nach SIA 180 wählen; bei kritischen Räumen dynamische Simulation (SIA 380/2).");
+  if(lab) add("req","label","Minergie-Anforderung sommerlicher Wärmeschutz",
+    "Minergie stellt erhöhte Anforderungen an den sommerlichen Wärmeschutz (bei Wohnbauten u. a. begrenzte Überhitzungsstunden über 26,5 °C).",
+    ["Label "+A.label],["miswp"],"Nachweis gemäss Anwendungshilfe Sommerlicher Wärmeschutz führen.");
+
+  const kTrig=[];
+  if(A.lasten==="hoch")kTrig.push("hohe interne Lasten");
+  if(A.glas==="hoch")kTrig.push("hoher Glasanteil");
+  if(nb("server"))kTrig.push("Serverraum");
+  if(["spital","verkauf","versammlung"].includes(N))kTrig.push(nutzLabel(N));
+  if(A.temp&&A.temp!=="komfort")kTrig.push("Temperaturanforderung "+A.temp);
+  if(A.personen==="sehrhoch")kTrig.push("sehr hohe Belegung");
+  const kWant = A.kuehl==="komfort"||A.kuehl==="prozess";
+  if(kTrig.length||kWant||A.kuehl==="offen"){
+    add("check","projekt","Mechanische Kühlung",
+      (kWant?"Kühlung ist vorgesehen. ":"")+"Ob eine Kühlung erforderlich ist, ergibt sich aus Kühllast und sommerlichem Wärmeschutz – nicht automatisch aus der Nutzung.",
+      kTrig.concat(kWant?["Wunsch Bauherrschaft"]:[]),["sia180","sia3802","sia3821"],
+      "Kühllast bzw. Raumtemperaturverlauf nachweisen (SIA 380/2, Klimadaten SIA 2028); zuerst bauliche Massnahmen (Sonnenschutz, Speichermasse, Nachtauskühlung) ausschöpfen.");
+    add("check","gesetz","Kantonale Anforderungen an Kühl- und Befeuchtungsanlagen",
+      "Das kantonale Energierecht enthält Anforderungen an Neuanlagen zur Kühlung (u. a. Nachweise, Effizienz). Ausgestaltung je Kanton verschieden.",
+      ["Kanton "+(A.kanton||"–")],["kenr","en5"],"Anforderungen beim kantonalen Energieamt klären.");
+    add("check","gesetz","Kältemittelwahl",
+      "Für Kälteanlagen gelten Verbote, Beschränkungen und je nach Anlage Melde- oder Bewilligungspflichten.",
+      kTrig.concat(kWant?["Kühlung vorgesehen"]:[]),["chemrrv"],"Kältemittel früh festlegen; natürliche Kältemittel prüfen.");
+  } else none("Mechanische Kühlung","keine erhöhten Lasten, keine Anforderung");
+
+  if(nb("server")) add("check","empfehlung","Abwärmenutzung Serverraum",
+    "Ganzjährige Abwärme aus IT-Räumen lässt sich oft für Heizung oder Warmwasser nutzen.",["Serverraum"],["sia3821"],"Abwärmepotenzial und Temperaturniveau grob abschätzen.");
+
+  /* 4 Befeuchtung / Entfeuchtung */
+  const bTrig=[];
+  if(A.rh==="min")bTrig.push("Mindestfeuchte gewünscht");
+  if(A.rh==="band")bTrig.push("enges Feuchteband");
+  if(N==="spital")bTrig.push("Spital");
+  if(A.temp==="prozess")bTrig.push("Prozessanforderung");
+  if(bTrig.length) add("check","projekt","Befeuchtung",
+    "Nicht automatisch erforderlich. Die Norm legt fest, unter welchen Bedingungen eine Befeuchtung zweckmässig ist; Befeuchter stellen erhöhte Hygieneanforderungen.",
+    bTrig,["sia3821","swki104","en5"],"Soll-Raumluftfeuchte begründen und Feuchtebilanz erstellen; Energie- und Hygieneaufwand abwägen.");
+  else none("Befeuchtung","keine Feuchteanforderung angegeben");
+
+  if(N==="hallenbad") add("req","norm","Entfeuchtung Hallenbad über Lüftungsanlage",
+    "Die Verdunstung aus Becken und nassen Flächen muss über die Lüftung abgeführt werden, um Tauwasser und Bauschäden zu vermeiden.",
+    ["Hallenbad"],["vdi2089","sia3821"],"Verdunstungsmenge und Luftmengen bestimmen; WRG mit Entfeuchtungswärmepumpe prüfen.");
+  else if(A.feuchte==="sehrhoch"||A.rh==="band") add("check","projekt","Entfeuchtung",
+    "Hohe Feuchtelasten oder enge Feuchtebänder können eine aktive Entfeuchtung erfordern.",
+    [A.feuchte==="sehrhoch"?"sehr hohe Feuchtelast":"",A.rh==="band"?"enges Feuchteband":""],["sia3821","sia180"],"Feuchtebilanz und Taupunktbetrachtung erstellen.");
+  else none("Entfeuchtung","keine hohen Feuchtelasten");
+
+  /* 5 Nassräume */
+  if(W && A.nassInnen==="ja") add("req","norm","Mechanische Abluft innenliegender Bäder/WC",
+    "Innenliegende Nasszellen ohne Fenster benötigen eine mechanische Abluft.",["innenliegende Nasszellen"],["sia3825"],"Abluftmengen und Nachströmung nach SIA 382/5 festlegen.");
+  if(nb("garderobe")||A.feuchte==="erhoeht") add("check","projekt","Abluft Garderoben, Duschen und Nassräume",
+    "Erhöhte Feuchtelasten müssen gezielt abgeführt werden.",[nb("garderobe")?"Garderoben/Duschen":"",A.feuchte==="erhoeht"?"erhöhte Feuchtelast":""],[W?"sia3825":"sia3821","sia180"],"Abluftmengen nach Norm bestimmen; Zuluft-Nachströmung sicherstellen.");
+
+  /* 6 Küche, Fumoir, Gerüche */
+  if(kueche){
+    add("req","gesetz","Küchenabluft gewerbliche Küche",
+      "Küchenabluftanlagen unterliegen besonderen Brandschutzanforderungen (u. a. Fettabscheidung, Materialisierung der Leitungen). An Arbeitsplätzen sind Luftverunreinigungen möglichst an der Quelle zu erfassen.",
+      [N==="restaurant"?"Restaurant":"gewerbliche Küche",A.kuecheArt?"Küchenart "+A.kuecheArt:""],["vkf2515","argv18"],"Küchenabluft als eigene Anlage mit Kompensationsluft planen.");
+    add("req","norm","Auslegung Küchenlüftung",
+      "Luftmengen, Hauben und Kompensationsluft nach der Norm für gewerbliche Küchen.",["gewerbliche Küche"],["en16282","sia3821"],"Geräteliste der Küchenplanung als Grundlage einfordern.");
+  } else none("Küchenabluft (gewerblich)","keine gewerbliche Küche");
+  if(kueche||A.geruch==="stark"||nb("garage")) add("check","gesetz","Geruchs- und Emissionsführung der Fortluft",
+    "Emissionen sind möglichst nahe am Entstehungsort zu erfassen und so abzuleiten, dass keine übermässigen Immissionen entstehen.",
+    [kueche?"Küche":"",A.geruch==="stark"?"starke Gerüche":"",nb("garage")?"Tiefgarage":""],["lrv","kbau"],"Fortluftführung (in der Regel über Dach) früh mit Architektur abstimmen.");
+  if(N==="restaurant"&&A.fumoir==="ja") add("req","gesetz","Lüftung Fumoir",
+    "Raucherräume müssen nach dem Passivrauchschutz abgetrennt und ausreichend belüftet sein.",["Fumoir"],["parv","sia3821"],"Fumoir als eigene Abluftzone mit Unterdruck planen.");
+
+  /* 7 Tiefgarage, Schutzraum, Labor, Prozess */
+  if(nb("garage")) add("check","gesetz","Garagenlüftung und Rauchabzug Einstellhalle",
+    "Lüftung und Rauch-/Wärmeabzug von Einstellhallen richten sich nach kantonalen Vorgaben und den VKF-Brandschutzvorschriften, abhängig von Grösse und Öffnungen.",
+    ["Tiefgarage"],["kbau","vkf2115","vkf2515"],"Natürliche oder mechanische Lüftung klären; Anforderungen der Brandschutzbehörde einholen.");
+  else none("Garagenlüftung","keine Einstellhalle");
+  if(nb("schutzraum")) add("req","gesetz","Schutzraumbelüftung",
+    "Wird ein Schutzraum erstellt, ist die Belüftung nach den technischen Weisungen des BABS auszuführen. Ob gebaut oder ein Ersatzbeitrag geleistet wird, regelt der Kanton.",
+    ["Schutzraum"],["tws"],"Baupflicht bzw. Ersatzbeitrag bei der kantonalen Zivilschutzstelle klären.");
+  else none("Schutzraumbelüftung","kein Schutzraum");
+  if(laborChem){
+    add("req","gesetz","Laborlüftung für Arbeiten mit Gefahrstoffen",
+      "Gesundheitsgefährdende Stoffe sind an der Quelle zu erfassen; Grenzwerte am Arbeitsplatz sind einzuhalten.",["chemisches Labor"],["vuv44","argv18"],"Gefährdungsermittlung mit Nutzer; Luftwechsel und Druckhaltung festlegen.");
+    add("req","norm","Laborabzüge",
+      "Abzüge müssen die Anforderungen der Produktnorm erfüllen; ihr Abluftbedarf bestimmt oft die Anlagengrösse.",["chemisches Labor"],["en14175"],"Anzahl und Typ der Abzüge früh erheben.");
+  }
+  if(laborBio) add("check","gesetz","Biologisches Labor – Anforderungen nach Schutzstufe",
+    "Je nach Schutzstufe ergeben sich Anforderungen an Unterdruck, Filterung und Dichtheit.",["biologisches Labor"],["esv"],"Schutzstufe mit Nutzer und Behörde festlegen.");
+  if(!laborChem&&!laborBio) none("Laborlüftung","kein chemisches/biologisches Labor");
+  const pTrig=[schad?"Schadstoffe: "+A.schad.join(", "):"",nb("werkstatt")?"Werkstatt":"",A.prozess==="ja"?"Prozessabluft":"",A.prozess==="offen"?"Prozess offen":""].filter(Boolean);
+  if(pTrig.length){
+    const reqP = (schad||nb("werkstatt")) && (work||nb("werkstatt"));
+    add(reqP?"req":"check",reqP?"gesetz":"projekt","Prozessabluft / Absaugung an der Quelle",
+      reqP?"Luftverunreinigungen an Arbeitsplätzen sind möglichst am Entstehungsort zu erfassen; Grenzwerte am Arbeitsplatz sind einzuhalten.":"Art und Menge der Prozessemissionen sind noch zu klären.",
+      pTrig,reqP?["argv18","vuv44","lrv"]:["sia3821","lrv"],"Emissionsquellen, Stoffe und Mengen mit Nutzer erheben; Emissionsbegrenzung nach LRV prüfen.");
+  } else none("Prozessabluft","keine Prozesse oder Schadstoffe");
+
+  /* 8 Spital, Hygiene, Reinraum */
+  if(N==="spital") add("req","norm","RLT-Anlagen in medizinisch genutzten Räumen",
+    "Raumklassen, Filterstufen und Druckhaltung richten sich nach der SWKI-Richtlinie.",["Spital / Pflege"],["swki105","swki104"],"Raumbuch mit Raumklassen erstellen; Hygienefachperson einbeziehen.");
+  if(A.hyg==="sehrhoch"&&N!=="spital") add("check","norm","Reinraumanforderungen",
+    "Sehr hohe Hygieneanforderungen führen zu Reinraumklassen mit hohen Luftmengen und Filteranforderungen.",["Hygiene sehr hoch"],["iso14644","swki104"],"Reinraumklasse mit Nutzer festlegen.");
+  if(A.hyg==="erhoeht"&&N!=="spital") add("check","projekt","Erhöhte Hygieneanforderungen",
+    "Erhöhte Hygieneanforderungen können Filterung, Druckhaltung und Reinigungszugänglichkeit beeinflussen.",["Hygiene erhöht"],["swki104"],"Anforderungen der Nutzung schriftlich festhalten.");
+
+  /* 9 Umgebung */
+  if(A.laerm&&A.laerm!=="normal"){
+    add("check","gesetz","Aussenlärm: Baubewilligung in lärmbelastetem Gebiet",
+      "Bei lärmempfindlichen Räumen sind die Immissionsgrenzwerte grundsätzlich am offenen Fenster einzuhalten. Eine mechanische Lüftung ersetzt diesen Nachweis nicht automatisch – die kantonale Praxis ist massgebend.",
+      ["Aussenlärm "+A.laerm],["lsv31","kbau"],"Lärmgutachten und kantonale Praxis früh klären.");
+    add("check","empfehlung","Komfortlüftung zur Verbesserung des Wohn- und Arbeitskomforts",
+      "Bei Lärm wird seltener über die Fenster gelüftet; eine mechanische Lufterneuerung sichert dann die Raumluftqualität.",["Aussenlärm"],["sia3825","sia3821"],"Schallschutz der Aussenluftöffnungen berücksichtigen.");
+  }
+  if(A.aul==="belastet") add("check","empfehlung","Filterung und Lage der Aussenluftfassung",
+    "Belastete Aussenluft erfordert eine geeignete Filterung und eine günstig gelegene Aussenluftfassung.",["Aussenluft belastet"],["sia3821","en167983"],"Aussenluftfassung von Emissionsquellen abgewandt planen; Filterklassen festlegen.");
+  if(A.erde==="ja") add("check","gesetz","Radonschutz",
+    "Für Aufenthaltsräume gilt ein Referenzwert für die Radonkonzentration. Bei Neu- und Umbauten sind Massnahmen nach dem Stand der Technik zu treffen.",
+    ["Aufenthaltsräume mit Erdberührung"],["stsv"],"Radonkarte BAG konsultieren; Druckverhältnisse der Lüftung (kein Unterdruck im Erdgeschoss) beachten.");
+  if(A.eco==="ja") add("check","label","ECO: Raumluftmessungen nach Fertigstellung",
+    "Beim Zusatz ECO können Messungen zu Formaldehyd, TVOC und Radon gefordert sein.",["Zusatz ECO"],["eco"],"Materialwahl und Lüftungsinbetriebnahme auf Messungen ausrichten.");
+  if(labP) add("req","label","Luftdichtheitsmessung Minergie-P/-A",
+    "Bei Minergie-P und -A wird die Luftdichtheit jedes Gebäudes gemessen. Das beeinflusst Lüftungsbalance und Feuerstätten.",["Label "+A.label],["milu"],"Luftdichtheitskonzept inkl. Durchdringungen der Lüftung festlegen.");
+
+  /* 10 Entrauchung */
+  const rTrig=[];
+  if(A.hoehe==="hoch")rTrig.push("Hochhaus");
+  if(nb("atrium"))rTrig.push("Atrium");
+  if(nb("garage"))rTrig.push("Einstellhalle");
+  if(["verkauf","versammlung","industrie","lager"].includes(N)&&(A.groesse==="l"||A.groesse==="xl"))rTrig.push("grosse "+nutzLabel(N)+"-Fläche");
+  if(rTrig.length) add("check","gesetz","Rauch- und Wärmeabzug (Entrauchung)",
+    "Ob und in welcher Form ein RWA erforderlich ist, hängt von Gebäudegeometrie, Nutzung und Brandschutzkonzept ab.",rTrig,["vkf2115"],"Anforderungen im Brandschutzkonzept festlegen; Raumbedarf für Zu- und Abluftöffnungen reservieren.");
+  else none("Entrauchung / RWA","keine Hinweise aus Höhe, Nutzung oder Geometrie");
+
+  /* 11 Akustik */
+  if(mech!=="none"||kWant) add("check","norm","Geräusche haustechnischer Anlagen im Gebäude",
+    "Für lärmempfindliche Räume gelten Anforderungen an Anlagengeräusche.",["Lüftungs-/Kälteanlage"],["sia181"],"Anforderungsstufe festlegen; Schalldämpfer und Luftgeschwindigkeiten berücksichtigen.");
+
+  /* 12 Bestand */
+  if(best&&A.bestAnl!=="nein") add("check","gesetz","Bestehende Anlagen: Zustand und Anforderungen bei Ersatz",
+    "Beim Ersatz oder Umbau gelten für neue Anlageteile die Anforderungen des aktuellen Energierechts. Bestehende Anlagen sind auf Hygiene und Brandschutz zu prüfen.",
+    ["Bestand",A.bestAnl==="unklar"?"Anlagenbestand unklar":"Anlagen vorhanden"],["kenr","vkf2515"],"Zustandsaufnahme inkl. Hygieneinspektion (SWKI VA104-01) und Brandschutzklappen.");
+
+  /* ---------- Kritische Projektpunkte ---------- */
+  add("crit","gesetz","Kantonales Energierecht prüfen",
+    "Die MuKEn 2025 wurden am 29. August 2025 von der EnDK verabschiedet und werden bis etwa 2030 in die kantonalen Gesetze überführt. Bis dahin gilt im Kanton "+(A.kanton||"–")+" der dort umgesetzte Stand. Kantonale Energieanforderungen projektspezifisch verifizieren.",
+    ["Kanton "+(A.kanton||"–")],["kenr"],"Gültigen Erlass und Vollzugshilfen beim kantonalen Energieamt bestätigen.");
+  if(mech!=="none"||rTrig.length) add("crit","gesetz","Brandschutzkonzept abgleichen",
+    "In Kraft sind die VKF-Brandschutzvorschriften 2015. Die BSV 2026 sind noch nicht in Kraft gesetzt; der Zeitplan wurde verschoben. Projektverlauf beachten.",
+    mechWhy.concat(rTrig),["vkf2515","vkf2115"],"Brandschutzplaner früh einbeziehen; Schachtkonzept und Abschottungen festlegen.");
+  if(mech!=="none"&&A.zentrale!=="ja") add("crit","empfehlung","Platzbedarf Technikzentrale und Steigzonen reservieren",
+    "Lüftungszentralen, Schächte und Verteilungen werden in frühen Phasen häufig unterschätzt.",["Zentrale nicht definiert"],["sia3821"],"Flächen und Geschosshöhen mit Richtwerten reservieren.");
+  if(mech!=="none"&&A.fuehrung!=="dach") add("crit","empfehlung","Aussen- und Fortluftführung koordinieren",
+    "Die Lage der Aussenluftfassung und des Fortluftauslasses bestimmt Luftqualität, Kurzschlussgefahr und Fassadenbild.",[A.fuehrung==="fassade"?"Führung über Fassade":"Führung unklar"],["sia3821","lrv"],"Mindestabstände und Lage mit Architektur festlegen.");
+  if(kWant||A.aussen!=="nein"||(mech!=="none"&&A.fuehrung!=="dach")) add("crit","gesetz","Anlagelärm gegenüber Nachbarschaft",
+    "Neue ortsfeste Anlagen (Rückkühler, Wärmepumpen, Aussenluft-/Fortluftöffnungen) müssen die Planungswerte der LSV einhalten.",
+    [A.aussen==="ja"?"Aussengeräte":"",A.aussen==="offen"?"Aussengeräte offen":"",kWant?"Kühlung":""],["lsv7"],"Standorte früh festlegen; Lärmprognose erstellen.");
+  if(W&&A.feuer==="ja") add("crit","gesetz","Feuerstätte und Lüftung abstimmen",
+    "Raumluftabhängige Feuerstätten vertragen keinen Unterdruck durch Abluftanlagen oder Dunstabzüge.",["Feuerstätte"],["vkf2415","sia3825"],"Raumluftunabhängige Feuerstätte oder Sicherheitseinrichtung vorsehen.");
+  if(N==="hallenbad") add("crit","empfehlung","Hallenbad: Korrosion und Luftführung",
+    "Chlorhaltige, feuchte Luft stellt hohe Anforderungen an Materialien und Luftführung an Fassaden.",["Hallenbad"],["vdi2089"],"Materialisierung und Fassadenbelüftung früh festlegen.");
+  if(best&&A.baujahr==="vor1990") add("crit","gesetz","Gebäudeschadstoffe vor Eingriffen abklären",
+    "Bei Bauten vor 1990 ist mit Asbest und weiteren Schadstoffen zu rechnen, auch in Lüftungsanlagen und Brandschutzklappen.",["Baujahr vor 1990"],["bauav"],"Schadstoffermittlung vor Planung der Eingriffe.");
+  if(best&&A.denkmal==="ja") add("crit","gesetz","Denkmalpflege einbeziehen",
+    "Durchbrüche, Aussengeräte und Fassadenöffnungen bedürfen der Abstimmung.",["Denkmalschutz"],["kbau"],"Frühe Vorabklärung mit der Denkmalpflege.");
+  if(W&&!labP&&mech!=="none") ;/* bewusst keine weitere Regel */
+
+  return {F,mech,mechWhy};
+}
+
+/* ---------- Fazit: Anlagenkonzept auf einen Blick (abgeleitet aus den Befunden) ---------- */
+function fazit(A,ev){
+  const {F,mech,mechWhy}=ev, W=isWohnen(A), lab=A.label&&A.label!=="keins";
+  const find=p=>F.find(f=>f.g!=="none"&&f.title.startsWith(p));
+  const rows=[];
+  const kuecheW=" Küche: Umlufthaube oder Abluft mit gesicherter Nachströmung.";
+  if(W){
+    if(mech==="req") rows.push({t:"Lufterneuerung",s:"req",v:"Lüftungsanlage erforderlich ("+mechWhy.join(", ")+")",
+      sys:(lab?"Komfortlüftung (KWL) mit WRG – zentral, wohnungsweise oder als Einzelraumlüfter mit WRG. Andere Systeme nur, wenn im Minergie-Nachweis zulässig."
+             :"Mechanische Lüftung der Räume ohne Fenster, z. B. Abluft mit Nachströmung oder KWL.")+kuecheW});
+    else{
+      const bad=A.nassInnen==="ja";
+      const kwl=(A.laerm&&A.laerm!=="normal")||A.art==="neubau";
+      rows.push({t:"Lufterneuerung",s:bad?"req":"check",
+        v:(bad?"Keine KWL vorgeschrieben – Badabluft erforderlich":"Keine Lüftungsanlage vorgeschrieben – Lüftungskonzept festlegen")+(A.laerm&&A.laerm!=="normal"?"; KWL wegen Aussenlärm empfohlen":""),
+        sys:(bad?"Abluftventilatoren in innenliegenden Bädern/WC mit Nachströmung (z. B. Aussenluftdurchlässe). ":"Fensterlüftung; Feuchteschutz sicherstellen. ")
+           +(kwl?"KWL empfohlen"+(A.laerm&&A.laerm!=="normal"?" (Aussenlärm)":"")+".":"")+(A.feuer==="ja"?kuecheW:"")});
+    }
+  } else {
+    if(mech==="req") rows.push({t:"Lufterneuerung",s:"req",v:"Lüftungsanlage erforderlich ("+mechWhy.join(", ")+")",
+      sys:"Zu-/Abluftanlage mit WRG"+(A.personen&&A.personen!=="normal"?", bedarfsgeregelt (CO₂/VOC)":"")+". Bereiche mit Sonderanforderungen als eigene Anlagen."});
+    else if(mech==="check") rows.push({t:"Lufterneuerung",s:"check",v:"Lüftungsanlage prüfen ("+mechWhy.join(", ")+")",
+      sys:"Varianten vergleichen: Fensterlüftung, hybride Lüftung, Zu-/Abluftanlage mit WRG"+(A.personen&&A.personen!=="normal"?" (bedarfsgeregelt)":"")+"."});
+    else rows.push({t:"Lufterneuerung",s:"none",v:"Kein Auslöser für eine Lüftungsanlage",sys:"Natürliche Lüftung; Sanitärräume mit Abluft."});
+  }
+  if(mech!=="none") rows.push({t:"Wärmerückgewinnung",s:mech==="req"?"req":"check",
+    v:mech==="req"?"Erforderlich (kantonales Energierecht, Anlage mit Aussen- und Fortluft)":"Erforderlich, falls eine Zu-/Abluftanlage gebaut wird",
+    sys:"Plattentauscher oder Rotor. Feuchterückgewinnung prüfen, wenn trockene Winterluft ein Thema ist."});
+  const k=find("Mechanische Kühlung");
+  rows.push(k?{t:"Kühlung",s:"check",v:A.kuehl==="prozess"?"Prozess-/IT-Kühlung vorgesehen – Bedarf nachweisen":"Kühlbedarf prüfen ("+k.trig.join(", ")+")",
+      sys:"Reihenfolge: sommerlicher Wärmeschutz (Sonnenschutz, Speichermasse) → Nachtauskühlung / Free Cooling → mechanische Kühlung."}
+    :{t:"Kühlung",s:"none",v:"Kein Auslöser – sommerlichen Wärmeschutz nachweisen",sys:"Passive Massnahmen: Sonnenschutz, Speichermasse, Nachtauskühlung."});
+  const b=find("Befeuchtung");
+  rows.push(b?{t:"Befeuchtung",s:"check",v:"Prüfen ("+b.trig.join(", ")+")",sys:"Zuerst Feuchterückgewinnung prüfen; Befeuchter nur mit Hygienekonzept."}
+    :{t:"Befeuchtung",s:"none",v:"Nicht erforderlich – trockene Winterluft allein ist kein Auslöser",sys:"—"});
+  const e=find("Entfeuchtung");
+  if(e) rows.push({t:"Entfeuchtung",s:e.g,v:e.g==="req"?"Erforderlich":"Prüfen ("+e.trig.join(", ")+")",
+    sys:A.nutzung==="hallenbad"?"Lüftungsgerät mit Entfeuchtung, z. B. mit Entfeuchtungswärmepumpe.":"Feuchtebilanz; ggf. Entfeuchtung über Kühlregister."});
+  const SPEC=[["Küchenabluft","Küchenabluft"],["Lüftung Fumoir","Fumoir-Lüftung"],["Schutzraumbelüftung","Schutzraumbelüftung"],["Garagenlüftung","Garagenlüftung"],
+    ["Laborlüftung","Laborlüftung"],["Laborabzüge","Laborabzüge"],["Biologisches Labor","Biolabor"],["Prozessabluft","Prozessabluft"],
+    ["Rauch- und Wärmeabzug","Entrauchung / RWA"],["RLT-Anlagen in medizinisch","Spitallüftung"],["Reinraum","Reinraum"],["Abluft Garderoben","Abluft Garderoben/Duschen"]];
+  const items=SPEC.map(([p,n])=>{const f=find(p);return f?{n,s:f.g}:null;}).filter(Boolean);
+  rows.push({t:"Spezialanlagen",s:items.some(i=>i.s==="req")?"req":items.length?"check":"none",
+    v:items.length?items.map(i=>i.n+(i.s==="req"?" (erforderlich)":" (prüfen)")).join(", "):"Keine",sys:items.length?"Als eigene Anlagen bzw. Zonen planen.":"—"});
+  const kurz=rows[0].v+(k?"; Kühlung prüfen":"")+(items.length?"; zusätzlich "+items.length+" Spezialanlage"+(items.length>1?"n":""):"")+".";
+  return {rows,kurz};
+}
+
+/* ---------- Rendering Wizard ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function renderSteps(){
+  $("#steps").innerHTML=SECTIONS.map((s,i)=>{
+    const cls=i<step?"done":i===step?"cur":"";
+    const can=i<=step||SECTIONS.slice(0,i).every(x=>!missing(x.id).length);
+    return `<li class="${cls}">${can?`<button type="button" data-go="${i}" ${i===step?'aria-current="step"':""}>${esc(s.t)}</button>`:esc(s.t)}</li>`;
+  }).join("");
+}
+function renderQs(){
+  const s=SECTIONS[step];
+  $("#secTitle").textContent=s.t; $("#secLead").textContent=s.lead;
+  $("#qs").innerHTML=visible(s.id).map(q=>{
+    const sub=q.p&&Q.find(x=>x.id===q.p)?.s===s.id?" sub":"";
+    let inner="";
+    if(q.type==="text") inner=`<input type="text" id="in_${q.id}" data-q="${q.id}" value="${esc(A[q.id]||"")}" autocomplete="off">`;
+    else if(q.type==="select") inner=`<select id="in_${q.id}" data-q="${q.id}"><option value="">Bitte wählen</option>${q.o.map(o=>`<option value="${o.v}" ${A[q.id]===o.v?"selected":""}>${esc(o.l)}</option>`).join("")}</select>`;
+    else inner=`<div class="opts" role="group" aria-labelledby="l_${q.id}">${q.o.map(o=>{
+      const on=q.type==="multi"?has(A,q.id,o.v):A[q.id]===o.v;
+      return `<button type="button" class="opt${q.type==="multi"?" multi":""}" aria-pressed="${on}" data-q="${q.id}" data-v="${o.v}">${esc(o.l)}${o.h?`<small>${esc(o.h)}</small>`:""}</button>`;}).join("")}</div>`;
+    const lab=q.type==="text"||q.type==="select"?`<label class="ql" id="l_${q.id}" for="in_${q.id}">${esc(q.l)}</label>`:`<span class="ql" id="l_${q.id}">${esc(q.l)}</span>`;
+    return `<div class="q${sub}">${lab}${q.help?`<p class="help">${esc(q.help)}</p>`:""}${inner}</div>`;
+  }).join("");
+  $("#btnBack").disabled=step===0;
+  $("#btnNext").textContent=step===SECTIONS.length-1?"Auswertung anzeigen":"Weiter";
+  $("#err").textContent="";
+}
+function fmtVal(q){
+  const v=A[q.id];
+  if(q.type==="text"||q.type==="select") return v;
+  if(q.type==="multi") return (v||[]).map(x=>q.o.find(o=>o.v===x)?.l).join(", ")||"keine";
+  return q.o.find(o=>o.v===v)?.l;
+}
+function renderTree(){
+  const answered=q=>A[q.id]!==undefined&&A[q.id]!==""&&q.show(A);
+  let html="";
+  SECTIONS.forEach(s=>{
+    const qs=Q.filter(q=>q.s===s.id&&answered(q)&&!(q.type==="multi"&&!A[q.id].length&&q.opt&&false));
+    if(!qs.length)return;
+    const roots=qs.filter(q=>!q.p||!qs.find(x=>x.id===q.p));
+    const node=q=>{const kids=qs.filter(x=>x.p===q.id);
+      return `<li><span class="k">${esc(q.l)}:</span> <span class="v">${esc(fmtVal(q)||"")}</span>${kids.length?`<ul>${kids.map(node).join("")}</ul>`:""}</li>`;};
+    html+=`<ul class="tree"><li class="sec">${esc(s.t)}</li>${roots.map(node).join("")}</ul>`;
+  });
+  $("#tree").innerHTML=html||`<p class="empty">Noch keine Antworten. Beginnen Sie mit der Art des Vorhabens.</p>`;
+  const {F}=evaluate(A); const c=g=>F.filter(f=>f.g===g).length;
+  $("#tally").innerHTML=`<div class="r"><b>${c("req")}</b>erforderlich</div><div class="c"><b>${c("check")}</b>zu prüfen</div><div class="x"><b>${c("crit")}</b>kritisch</div><div class="n"><b>${c("none")}</b>kein Auslöser</div>`;
+}
+function render(){
+  prune();
+  $("#wizardGrid").classList.toggle("hidden",showResult);
+  $("#result").classList.toggle("hidden",!showResult);
+  if(showResult){renderResult();return;}
+  renderSteps(); renderQs(); renderTree(); save();
+}
+
+/* ---------- Rendering Resultat ---------- */
+function refList(ids,k,match){
+  const r=ids.filter(id=>REF[id]&&(match?REF[id].k===k:REF[id].k!==k));
+  if(!r.length)return "";
+  return `<ul>${r.map(id=>`<li>${esc(REF[id].t)}${match?"":` <span class="kind ${REF[id].k}">${KIND[REF[id].k].l}</span>`}</li>`).join("")}</ul>`;
+}
+function card(f){
+  const g=refList(f.refs,f.k,true), x=refList(f.refs,f.k,false);
+  return `<article class="f ${f.g}"><h4>${esc(f.title)} <span class="kind ${f.k}">${KIND[f.k].l}</span></h4>
+  <dl><dt>Grund</dt><dd>${esc(f.reason)}</dd>
+  ${f.trig.length?`<dt>Auslöser</dt><dd>${esc(f.trig.join(" · ").replace(/ · /g,", "))}</dd>`:""}
+  ${g?`<dt>Grundlage</dt><dd>${g}</dd>`:""}
+  ${x?`<dt class="xref">Ergänzend</dt><dd class="xref">${x}</dd>`:""}
+  <dt>Nächster Schritt</dt><dd>${esc(f.next)}</dd></dl></article>`;
+}
+const STAND=[
+  ["SIA 382/1:2025 Mechanische Lüftung in Gebäuden","gültig seit 1. Februar 2025, ersetzt Ausgabe 2014","ok"],
+  ["SIA 380/2:2022 (ersetzt SIA 382/2)","gültig seit November 2022","ok"],
+  ["SIA 382/5 Mechanische Lüftung in Wohngebäuden","Ausgabe 2021 – vor Verwendung im SIA-Shop bestätigen","warn"],
+  ["SIA 180, SIA 181, SIA 2024, SIA 2028","aktuelle Ausgaben vor Verwendung bestätigen","warn"],
+  ["Minergie Produktreglement und Anwendungshilfen","Fassungen 2026.x (Anwendungshilfe 2026.2)","ok"],
+  ["MuKEn 2025","verabschiedet 29. August 2025, kantonale Einführung bis ca. 2030","ok"],
+  ["VKF-Brandschutzvorschriften","BSV 2015 in Kraft; BSV 2026 noch nicht in Kraft gesetzt","ok"],
+  ["SWKI VA104-01, VA105-01; SN EN 16798-1/-3","aktuelle Ausgaben vor Verwendung bestätigen","warn"],
+  ["Bundesrecht (ArGV 3, LSV, LRV, StSV, ChemRRV, EnEV, BauAV)","aktuelle Fassung auf fedlex.admin.ch bestätigen","warn"]
+];
+function renderResult(){
+  const ev=evaluate(A), {F}=ev;
+  const by=g=>F.filter(f=>f.g===g);
+  const today=new Date().toLocaleDateString("de-CH");
+  const groups=[
+    ["req","Erforderlich","Grundlage ist ein Gesetz, eine Norm oder ein angestrebtes Label."],
+    ["check","Zu prüfen","Kann erforderlich werden oder ist nur unter Bedingungen vorgeschrieben."],
+  ];
+  let h=`<div class="card"><div class="rhead"><h2>Projektbeurteilung Lüftung und Klima</h2>
+    <div class="meta"><span>Projekt <b>${esc(A.name||"ohne Bezeichnung")}</b></span><span>Vorhaben <b>${esc(fmtVal(Q.find(q=>q.id==="art"))||"–")}</b></span>
+    <span>Kanton <b>${esc(A.kanton||"–")}</b></span><span>Nutzung <b>${esc(nutzLabel(A.nutzung))}</b></span>
+    <span>Label <b>${esc(fmtVal(Q.find(q=>q.id==="label"))||"–")}${A.eco==="ja"?" ECO":""}</b></span><span>Beurteilt am <b>${today}</b></span><span>Fachstand des Tools <b>22.09.2026</b></span></div>
+    <div class="toolbar noprint"><button class="btn" type="button" id="btnEdit">Angaben ändern</button><button class="btn" type="button" id="btnPrint">Bericht drucken / als PDF speichern</button></div></div>
+    <div class="legend">${Object.entries(KIND).map(([k,v])=>`<div><span class="kind ${k}">${v.l}</span><br>${esc(v.d)}</div>`).join("")}</div></div>`;
+  const fz=fazit(A,ev);
+  h+=`<section class="card fazit"><div class="fzhead"><h3>Fazit – Anlagenkonzept auf einen Blick</h3><p class="kurz">${esc(fz.kurz)}</p></div>
+    <div class="frow fth"><div>Thema</div><div>Beurteilung</div><div>Typische Lösung <span class="kind empfehlung">Fachliche Empfehlung</span></div></div>
+    ${fz.rows.map(r=>`<div class="frow"><div class="ft">${esc(r.t)}</div><div class="fv"><span class="dot ${r.s}" aria-hidden="true"></span><span><span class="sr">${{req:"Erforderlich",check:"Zu prüfen",none:"Kein Auslöser"}[r.s]}: </span>${esc(r.v)}</span></div><div class="fs">${esc(r.sys)}</div></div>`).join("")}
+    <p class="fznote">Das Fazit fasst die Einzelbefunde unten zusammen. Die Ampel übernimmt deren Einstufung; die typischen Lösungen sind Systemvorschläge ohne Vorschriftscharakter.</p></section>`;
+  groups.forEach(([g,t,d])=>{const L=by(g); if(!L.length)return;
+    h+=`<section class="group"><h3><span class="dot ${g}" aria-hidden="true"></span>${t} <span class="cnt">${L.length} Punkte – ${d}</span></h3>${L.map(card).join("")}</section>`;});
+  const NL=by("none");
+  if(NL.length) h+=`<section class="group"><h3><span class="dot none" aria-hidden="true"></span>Nicht erforderlich / aktuell kein Auslöser</h3>
+    <div class="nonelist">${NL.map(n=>`<span>${esc(n.title)} <small>– ${esc(n.why)}</small></span>`).join("")}</div></section>`;
+  const CL=by("crit");
+  if(CL.length) h+=`<section class="group"><h3><span class="dot crit" aria-hidden="true"></span>Kritische Projektpunkte <span class="cnt">früh klären</span></h3>${CL.map(card).join("")}</section>`;
+  h+=`<section class="group"><h3>Stand der Grundlagen</h3><div class="tablewrap"><table><thead><tr><th>Regelwerk</th><th>Stand (recherchiert September 2026)</th></tr></thead><tbody>
+    ${STAND.map(r=>`<tr><td>${esc(r[0])}</td><td class="${r[2]}">${esc(r[1])}</td></tr>`).join("")}</tbody></table></div></section>
+    <p class="disclaimer"><b>Diese Projektbeurteilung dient der frühen Projektdefinition und ersetzt weder die Fachplanung noch die projektspezifische Prüfung der geltenden gesetzlichen, kantonalen, normativen und brandschutztechnischen Anforderungen.</b> Fachstand des Tools: 22.09.2026. Norm- und Gesetzesinhalte sind sinngemäss zusammengefasst; massgebend sind die Originaltexte in der jeweils gültigen Fassung sowie die kantonalen und kommunalen Vorschriften am Standort. Aussagen der Kategorie «Erforderlich» gelten unter der Voraussetzung, dass die Angaben zutreffen.</p>`;
+  $("#result").innerHTML=h;
+  $("#btnEdit").onclick=()=>{showResult=false;step=0;save();render();window.scrollTo(0,0);};
+  $("#btnPrint").onclick=()=>window.print();
+  save();
+}
+
+/* ---------- Events ---------- */
+document.addEventListener("click",e=>{
+  const o=e.target.closest(".opt");
+  if(o){const q=Q.find(x=>x.id===o.dataset.q), v=o.dataset.v;
+    if(q.type==="multi"){const a=Array.isArray(A[q.id])?A[q.id].slice():[]; const i=a.indexOf(v); i>=0?a.splice(i,1):a.push(v); A[q.id]=a;}
+    else A[q.id]=v;
+    render(); const again=document.querySelector(`.opt[data-q="${q.id}"][data-v="${v}"]`); if(again)again.focus(); return;}
+  const g=e.target.closest("[data-go]");
+  if(g){step=+g.dataset.go;render();return;}
+});
+document.addEventListener("input",e=>{const q=e.target.dataset&&e.target.dataset.q; if(!q)return; A[q]=e.target.value; save(); if(e.target.tagName==="SELECT")render(); else renderTree();});
+$("#btnNext").onclick=()=>{
+  const m=missing(SECTIONS[step].id);
+  if(m.length){$("#err").textContent="Bitte noch beantworten: "+m.map(q=>q.l).join("; ")+".";return;}
+  if(step<SECTIONS.length-1){step++;render();$("#wizard").scrollIntoView({block:"start"});}
+  else{
+    const open=SECTIONS.findIndex(s=>missing(s.id).length);
+    if(open>=0){step=open;render();$("#err").textContent="In diesem Abschnitt fehlen noch Angaben.";return;}
+    showResult=true;render();window.scrollTo(0,0);
+  }
+};
+$("#btnBack").onclick=()=>{if(step>0){step--;render();}};
+$("#btnReset").onclick=()=>{if(Object.keys(A).length&&!confirm("Alle Angaben löschen und neu beginnen?"))return;A={};step=0;showResult=false;save();render();window.scrollTo(0,0);};
+$("#btnTheme").onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;r.dataset.theme=dark?"light":"dark";};
+
+render();
+})();
+</script>
+</body>
+</html>

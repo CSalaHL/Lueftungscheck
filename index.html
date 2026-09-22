@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Planungstools Gebäudetechnik</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<meta name="theme-color" content="#16202A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Planungstools">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..750&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ECEFEE; --panel:#FFFFFF; --panel2:#F6F8F7; --ink:#16202A; --muted:#55626D; --line:#C8D0D5;
+  --aul:#3C8B40; --zul:#2360A3; --abl:#C49A1E; --fol:#8A5A2B; --focus:#2360A3;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#11171C; --panel:#192128; --panel2:#1F2830; --ink:#E4EAEE; --muted:#9BA8B2; --line:#2F3B45;
+    --aul:#6CC070; --zul:#72A9E8; --abl:#E3BF4A; --fol:#C78E57; --focus:#72A9E8;}
+}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;line-height:1.5}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+header{padding:36px 0 22px}
+.duct{display:flex;gap:6px;margin-bottom:20px;max-width:320px}
+.duct span{height:6px;flex:1;border-radius:3px}
+h1{font-stretch:118%;font-weight:720;font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.08;margin:0 0 8px}
+.lead{color:var(--muted);margin:0;max-width:60ch}
+.tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;padding:10px 0 40px}
+.tool{position:relative;display:flex;flex-direction:column;gap:6px;background:var(--panel);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:10px;padding:18px 18px 16px;color:inherit;text-decoration:none;min-height:170px}
+a.tool:hover{border-color:var(--ink);border-top-color:var(--c)}
+.tool h2{margin:0;font-size:1.2rem;font-stretch:112%;font-weight:680}
+.tool p{margin:0;color:var(--muted);font-size:.92rem}
+.tool .foot{margin-top:auto;padding-top:10px;display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted)}
+.state{font-weight:650;padding:2px 8px;border-radius:4px;border:1.5px solid currentColor}
+.state.live{color:var(--aul)}
+.state.soon{color:var(--muted);border-style:dotted}
+.tool.soon{background:var(--panel2);opacity:.8}
+.tool.soon h2{color:var(--muted)}
+footer{color:var(--muted);font-size:.82rem;padding:0 0 30px;max-width:80ch}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <div class="duct" aria-hidden="true"><span style="background:var(--aul)"></span><span style="background:var(--zul)"></span><span style="background:var(--abl)"></span><span style="background:var(--fol)"></span></div>
+  <h1>Planungstools Gebäudetechnik</h1>
+  <p class="lead">Werkzeuge für die frühe Projektphase. Wählen Sie ein Tool.</p>
+</header>
+
+<main class="wrap">
+  <div class="tools" id="tools"></div>
+</main>
+
+<footer class="wrap">
+  Die Tools dienen der frühen Projektdefinition und ersetzen weder die Fachplanung noch die projektspezifische Prüfung der geltenden Anforderungen. Eingaben werden nur lokal in Ihrem Browser gespeichert.
+</footer>
+
+<script>
+/* =====================================================================
+   TOOL-LISTE – hier neue Tools eintragen.
+   status: "live" = verfügbar (Kachel ist klickbar)
+           "soon" = in Vorbereitung (Kachel ausgegraut)
+   href:   Ordnername des Tools mit Schrägstrich, z. B. "brandschutz/"
+   color:  Farbe der Kachel-Oberkante
+   ===================================================================== */
+const TOOLS = [
+  {
+    title: "Lüftungsanforderungen",
+    desc: "Quickcheck Lüftung und Klima: Welche Anlagen sind erforderlich, zu prüfen oder nicht relevant?",
+    href: "lueftung/",
+    status: "live",
+    stand: "22.09.2026",
+    color: "var(--zul)"
+  },
+  {
+    title: "Honorarcheck",
+    desc: "Plausibilisierung von Planerhonoraren.",
+    href: "honorar/",
+    status: "soon",
+    color: "var(--abl)"
+  },
+  {
+    title: "Schnellauslegung",
+    desc: "Überschlägige Auslegung für Vorprojekt und Machbarkeit.",
+    href: "auslegung/",
+    status: "soon",
+    color: "var(--aul)"
+  },
+  {
+    title: "Brandschutzcheck",
+    desc: "Erste Einordnung brandschutztechnischer Anforderungen.",
+    href: "brandschutz/",
+    status: "soon",
+    color: "var(--fol)"
+  }
+];
+
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+document.getElementById("tools").innerHTML = TOOLS.map(t => {
+  const live = t.status === "live";
+  const inner = `<h2>${esc(t.title)}</h2><p>${esc(t.desc)}</p>
+    <div class="foot"><span class="state ${live ? "live" : "soon"}">${live ? "Verfügbar" : "In Vorbereitung"}</span>
+    ${t.stand ? `<span>Fachstand ${esc(t.stand)}</span>` : ""}</div>`;
+  return live
+    ? `<a class="tool" href="${esc(t.href)}" style="--c:${t.color}">${inner}</a>`
+    : `<div class="tool soon" style="--c:${t.color}" aria-disabled="true">${inner}</div>`;
+}).join("");
+</script>
+</body>
+</html>
