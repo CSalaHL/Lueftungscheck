@@ -15,6 +15,8 @@ honorar/index.html      Tool «Honorarcheck»
 honorar/daten.js        Ansätze, Kennwerte, Faktoren mit Quellen (hier aktualisieren)
 auslegung/index.html    Tool «Schnellauslegung»
 auslegung/daten.js      Luftmengen-Vorlagen, CHF pro m³/h, Faktoren mit Quellen
+brandschutz/index.html  Tool «Brandschutzcheck»
+brandschutz/daten.js    VKF-Anforderungen, Produktmasse, Gefahren, Herstellerlinks
 ```
 
 ## Veröffentlichen auf GitHub Pages
@@ -104,3 +106,12 @@ In `auslegung/daten.js`:
 - Kommas zwischen den Einträgen und Anführungszeichen um Texte stehen lassen.
 - Nach dem Ändern `fachstand` aktualisieren.
 - Ist nach einer Änderung die Seite leer, liegt fast immer ein Tippfehler vor (fehlendes Komma, Anführungszeichen). Letzte Version auf GitHub unter «History» wiederherstellen.
+
+## Brandschutzcheck aktualisieren
+
+In `brandschutz/daten.js`:
+
+- `produkte` – Brandschutzklappen mit Spaltmassen (s min./max. in mm), Einbausatz-Tabellen und Abständen. Nur Werte aus der Einbauanleitung zur Leistungserklärung bzw. VKF-Technischen Auskunft eintragen, mit Quelle (`quellen`).
+- Neues Produkt: Eintrag nach dem Muster von `fk2` ergänzen (`form: "rund"` oder `"eckig"`, `nass`, `weich`, optional `einbausatz`).
+- `hersteller` – Links zu Herstellerseiten.
+- `vkf`, `ausnahmen`, `gefahren` – Texte zur VKF-Richtlinie 25-15. Bei Inkraftsetzung der BSV 2026 überarbeiten und `hinweisBSV` anpassen.

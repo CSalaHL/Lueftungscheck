@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Brandschutzcheck Lüftung – BIM Werk</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="../icons/favicon-32.png">
+<meta name="theme-color" content="#383633">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..750&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#ECEFEE; --panel:#FFFFFF; --panel2:#F6F8F7; --ink:#16202A; --muted:#55626D; --line:#C8D0D5;
+  --ok:#1D7446; --warn:#9A6200; --bad:#B3261E; --zul:#2360A3; --abl:#C49A1E; --brand:#383633; --chip:#E3E8EA;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#11171C;--panel:#192128;--panel2:#1F2830;--ink:#E4EAEE;--muted:#9BA8B2;--line:#2F3B45;
+    --ok:#4FC38B;--warn:#E2A73C;--bad:#F2766C;--zul:#72A9E8;--abl:#E3BF4A;--brand:#E6E3DE;--chip:#26313A}
+}
+:root[data-theme="dark"]{--bg:#11171C;--panel:#192128;--panel2:#1F2830;--ink:#E4EAEE;--muted:#9BA8B2;--line:#2F3B45;
+  --ok:#4FC38B;--warn:#E2A73C;--bad:#F2766C;--zul:#72A9E8;--abl:#E3BF4A;--brand:#E6E3DE;--chip:#26313A}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;font-variant-numeric:tabular-nums}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--zul);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+header.top{padding:24px 0 14px}
+.home{display:inline-block;margin-bottom:14px;color:var(--zul);font-weight:600;text-decoration:none;font-size:.92rem}
+.home::before{content:"‹ "}
+.duct{display:flex;gap:6px;margin-bottom:16px;max-width:520px}
+.duct span{height:6px;flex:1;border-radius:3px;background:var(--abl)}
+.duct span:nth-child(2){background:var(--zul)}.duct span:nth-child(3){background:var(--brand);opacity:.5}
+h1{font-stretch:118%;font-weight:720;font-size:clamp(1.6rem,3.4vw,2.4rem);line-height:1.08;margin:0 0 6px}
+.lead{color:var(--muted);margin:0;max-width:72ch}
+.fachstand{margin:8px 0 0;font-size:.88rem;color:var(--muted)}.fachstand b{color:var(--ink)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{border:1px solid var(--line);background:var(--panel);padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:560;font-size:.93rem}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--zul);border-color:var(--zul);color:#fff}
+.btn.small{padding:4px 10px;font-size:.84rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.notice{border:1px solid var(--line);border-left:5px solid var(--warn);background:var(--panel);border-radius:8px;padding:10px 14px;font-size:.88rem;color:var(--muted);margin:10px 0 0;max-width:110ch}
+.notice b{color:var(--ink)}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start;padding:18px 0 40px}
+@media (max-width:980px){.grid{grid-template-columns:1fr}}
+.grid>*{min-width:0}
+@media (max-width:640px){.wrap{padding:0 12px}.body{padding:8px 14px 16px}.card>h2{padding:14px 14px 2px}.card>.sub{padding:0 14px 8px}.mixtab td:nth-child(2){font-size:.8rem}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:16px}
+.card>h2{margin:0;padding:16px 20px 2px;font-size:1.15rem;font-stretch:110%;font-weight:680;display:flex;gap:10px;align-items:baseline}
+.card>h2 .no{color:var(--zul);font-weight:700}
+.card>.sub{margin:0;padding:0 20px 8px;color:var(--muted);font-size:.88rem}
+.body{padding:8px 20px 18px}
+.row{display:flex;flex-wrap:wrap;gap:14px 18px;align-items:flex-end;margin-bottom:12px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label,.lbl{font-weight:600;font-size:.88rem}
+.field small{color:var(--muted);font-size:.8rem}
+input[type=text],input[type=number],select{padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);min-width:0}
+input[type=number]{text-align:right}
+.w-name{width:min(420px,100%)}.w-bw{width:min(460px,100%)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{border:0;background:var(--panel2);padding:7px 13px;cursor:pointer;font-size:.9rem}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--zul);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--panel2);padding:3px 10px;border-radius:14px;cursor:pointer;font-size:.82rem}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{border-color:var(--zul);color:var(--zul);font-weight:650}
+.tag{display:inline-block;font-size:.72rem;font-weight:650;padding:1px 7px;border-radius:4px;border:1.5px solid currentColor;white-space:nowrap;vertical-align:middle}
+.tag.ver{color:var(--ok)}.tag.ann{color:var(--warn);border-style:dashed}
+.kat{display:inline-block;min-width:40px;text-align:center;font-weight:700;font-stretch:115%;padding:2px 8px;border-radius:4px;background:var(--chip)}
+.hint{font-size:.83rem;color:var(--muted);margin:6px 0 0;max-width:80ch}
+.warnbox{border:1px dashed var(--warn);border-radius:8px;padding:8px 12px;font-size:.84rem;color:var(--muted);margin:0 0 12px}
+.warnbox b{color:var(--warn)}
+
+/* tables */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{background:var(--panel2);font-size:.8rem;font-weight:650;color:var(--muted);white-space:nowrap}
+td.num,th.num{text-align:right}
+tfoot td{font-weight:700;border-bottom:0}
+table input,table select{width:100%}
+.costs{min-width:760px}
+.costs .c-ebf{width:95px}.costs .c-kw{width:95px}.costs .c-st{width:110px}
+.del{border:0;background:none;color:var(--muted);cursor:pointer;font-size:1.1rem;padding:2px 6px}
+.del:hover{color:var(--bad)}
+.manual{border-color:var(--zul)!important;box-shadow:inset 0 0 0 1px var(--zul)}
+
+/* factors */
+.fac{display:grid;grid-template-columns:150px minmax(0,1fr) 84px;gap:6px 14px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.fac:first-child{border-top:0}
+.fac .fn{font-weight:650}
+.fac .fn small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
+.fac input[type=range]{width:100%;accent-color:var(--zul)}
+.fac .extra{grid-column:2 / 4}
+@media (max-width:640px){.fac{grid-template-columns:1fr 84px}.fac .fn{grid-column:1 / 3}.fac .extra{grid-column:1 / 3}}
+
+/* phases */
+.ph{display:grid;grid-template-columns:28px 44px minmax(0,1fr) 80px;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line);font-size:.93rem}
+.ph:first-child{border-top:0}
+.ph .pid{color:var(--muted);font-weight:650}
+.ph input[type=checkbox]{width:18px;height:18px;accent-color:var(--zul)}
+.qsum{display:flex;justify-content:space-between;padding-top:10px;border-top:2px solid var(--ink);font-weight:700;margin-top:4px}
+
+/* result */
+aside .card{position:sticky;top:calc(12px + env(safe-area-inset-top,0px))}
+.res{padding:16px 18px 18px}
+.res h2{margin:0 0 10px;font-size:1.05rem;font-stretch:110%}
+.big{font-size:2rem;font-weight:720;font-stretch:112%;line-height:1.1;margin:2px 0}
+.bigl{color:var(--muted);font-size:.82rem}
+.kv{display:grid;grid-template-columns:1fr auto;gap:3px 12px;font-size:.9rem;margin:12px 0 0}
+.kv dt{color:var(--muted)}.kv dd{margin:0;text-align:right;font-weight:600}
+.kv .sep{grid-column:1 / 3;border-top:1px solid var(--line);margin:5px 0}
+.kv .tot dt,.kv .tot dd{color:var(--ink);font-weight:750}
+.bar{display:flex;height:12px;border-radius:3px;overflow:hidden;margin:14px 0 4px;background:var(--chip)}
+.bar span{display:block;height:100%}
+.legendp{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:.74rem;color:var(--muted)}
+.legendp i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.warns{margin:12px 0 0;padding:0;list-style:none;font-size:.82rem}
+.warns li{padding:6px 9px;border-left:3px solid var(--warn);background:var(--panel2);margin-bottom:5px;border-radius:0 4px 4px 0}
+.warns li.bad{border-left-color:var(--bad)}
+details{border-top:1px solid var(--line)}
+details summary{cursor:pointer;padding:12px 20px;font-weight:650}
+details .body{padding-top:0}
+.formula{font-size:.9rem;line-height:1.8}
+.formula code{background:var(--panel2);padding:1px 6px;border-radius:4px;font-family:inherit;font-weight:600}
+.mobilebar{display:none}
+@media (max-width:980px){
+  .mobilebar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:10;justify-content:space-between;align-items:center;gap:10px;
+    background:var(--brand);color:#fff;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+  :root[data-theme="dark"] .mobilebar{color:#16202A}
+  .mobilebar b{font-size:1.15rem;font-stretch:112%}
+  .mobilebar a{color:inherit;font-size:.85rem}
+  body{padding-bottom:70px}
+  body .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));max-width:90vw;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:8px;font-size:.9rem;z-index:20}
+.printhead,.printonly{display:none}
+
+@page{size:A4 portrait;margin:15mm 14mm 17mm 14mm;
+  @bottom-left{content:"BIM Werk – Honorarcheck Lüftung/Klima";font:7.5pt Archivo,Helvetica,Arial,sans-serif;color:#666}
+  @bottom-right{content:"Seite " counter(page) " / " counter(pages);font:7.5pt Archivo,Helvetica,Arial,sans-serif;color:#666}}
+@media print{
+  :root:root:root{--bg:#fff;--panel:#fff;--panel2:#F3F5F5;--ink:#1A1A1A;--muted:#555;--line:#BFC6CA;--ok:#1D7446;--warn:#9A6200;--bad:#B3261E;--zul:#2360A3;--chip:#E6E9EA}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{background:#fff;font-size:9.5pt;line-height:1.4;padding:0}
+  header.top,.toolbar,.mobilebar,.noprint,.toast,.notice{display:none!important}
+  .printhead{display:flex;justify-content:space-between;align-items:flex-end;gap:10mm;padding-bottom:3mm;margin-bottom:4mm;border-bottom:1.5pt solid #383633}
+  .printhead img{height:15mm}
+  .printhead .pt{text-align:right;font-size:9pt;color:#383633}
+  .printhead .pt b{display:block;font-size:13pt;color:#1A1A1A}
+  .printonly{display:block}
+  .wrap{max-width:none;padding:0}
+  .grid{display:block;padding:0}
+  aside{display:none}
+  .card{border:0;border-radius:0;margin:0 0 3mm;break-inside:avoid}
+  .card>h2{padding:2mm 0 1mm;font-size:11pt;border-bottom:1pt solid var(--line)}
+  .card>.sub{padding:0 0 1mm;font-size:8pt}
+  .body{padding:1.5mm 0 2mm}
+  input,select{border:0!important;background:none!important;padding:0!important;box-shadow:none!important;-webkit-appearance:none;appearance:none;font-size:9pt}
+  input[type=range],.chips,.seg,.del,.btn,.addrow{display:none!important}
+  .costs{min-width:0}
+  table{font-size:8.5pt}th,td{padding:1.2mm 2mm}
+  .fac{grid-template-columns:40mm 1fr 20mm;padding:1.5mm 0}
+  .fac .extra{display:none}
+  details{border:0}details summary{display:none}
+  details>.body{display:block}
+  .tw{border:0;overflow:visible}
+  .ph{padding:.8mm 0}
+  input[type=text]::placeholder{color:transparent}
+  td.num{white-space:nowrap}
+  #psum .card{border:1pt solid #383633;padding:0 3mm 1mm}
+  #psum h2{border-bottom:0}
+  #psum td{font-size:9pt}
+}
+
+:root{--fire:#B3261E;--mortar:#C9C2B4;--wool:#E8D48A;--wall:#9AA3A9;--duct:#2360A3}
+.duct span{background:var(--fire)}.duct span:nth-child(2){background:#8A5A2B}.duct span:nth-child(3){background:var(--abl);opacity:1}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:10px}
+.tile{border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:10px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:6px}
+.tile:hover{border-color:var(--ink)}
+.tile[aria-pressed="true"]{border-color:var(--fire);box-shadow:inset 0 0 0 1px var(--fire);background:var(--panel)}
+.tile svg{width:100%;height:auto;display:block}
+.tile b{font-size:.92rem;line-height:1.2}
+.tile span{font-size:.78rem;color:var(--muted);line-height:1.3}
+.draw{padding:6px 14px 4px}
+.draw svg{width:100%;height:auto;display:block}
+.keyfig{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;padding:0 20px 16px}
+.kf{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--panel2)}
+.kf small{display:block;color:var(--muted);font-size:.78rem}
+.kf b{font-size:1.35rem;font-stretch:112%}
+.kf.main{border-color:var(--fire);background:var(--panel)}
+.reqs,.dangers,.links{list-style:none;margin:0;padding:0}
+.reqs li{padding:9px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;font-size:.92rem}
+.reqs li:first-child{border-top:0}
+.reqs .z{font-weight:700;color:var(--fire);font-size:.84rem}
+.dangers li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:8px;padding:8px 0;border-top:1px solid var(--line);font-size:.92rem}
+.dangers li:first-child{border-top:0}
+.dangers .ic{width:22px;height:22px}
+.dangers small{color:var(--muted)}
+.links li{padding:6px 0;border-top:1px solid var(--line)}
+.links li:first-child{border-top:0}
+.links a{color:var(--zul);font-weight:600;text-decoration:none}
+.links a:hover{text-decoration:underline}
+.src{font-size:.78rem;color:var(--muted)}
+.chk{display:flex;flex-direction:column;gap:6px}
+.chk label{display:flex;gap:8px;align-items:flex-start;font-size:.9rem}
+.chk input{margin-top:3px;width:16px;height:16px;accent-color:var(--fire)}
+input[type=range]{accent-color:var(--fire)}
+.legend-mat{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.8rem;color:var(--ink)}
+.legend-mat span{display:inline-flex;gap:6px;align-items:center}
+.legend-mat svg{flex:none}
+.draw svg{border:1px solid var(--line);border-radius:4px;background:#fff}
+.draw svg:only-child{max-width:560px}
+.tile svg{border-radius:4px}
+.srow{display:grid;grid-template-columns:minmax(0,1fr) 90px;gap:12px;align-items:center;max-width:520px}
+@media print{ .tiles{display:none!important} .draw svg{max-height:95mm} .keyfig{padding:0} }
+</style>
+</head>
+<body>
+<header class="top wrap">
+  <a class="home" href="../">Alle Tools</a>
+  <div class="duct" aria-hidden="true"><span></span><span></span><span></span></div>
+  <h1>Brandschutzcheck Lüftung</h1>
+  <p class="lead">Lüftungsdurchdringungen bildlich einordnen: Was verlangt die Situation nach VKF, wie gross darf bzw. muss die Aussparung pro Seite sein, und worauf ist zu achten.</p>
+  <p class="fachstand">Fachstand des Tools: <b id="fs"></b></p>
+  <div class="toolbar">
+    <button class="btn" id="btnPrint" type="button">Bericht drucken / als PDF speichern</button>
+    <button class="btn" id="btnReset" type="button">Neu beginnen</button>
+  </div>
+  <p class="notice" id="bsvNote"></p>
+</header>
+
+<main class="wrap">
+  <div class="printhead"><img src="../assets/logo-dark.png" alt="BIM Werk"><div class="pt"><b>Brandschutzcheck Lüftung</b><span id="phName"></span></div></div>
+  <div class="grid">
+    <div id="main"></div>
+    <aside><div class="card"><div class="res" id="res"></div></div></aside>
+  </div>
+  <section id="below"></section>
+</main>
+<div class="mobilebar" id="mbar"></div>
+
+<script src="daten.js"></script>
+<script>
+(function(){
+"use strict";
+const D=window.BRANDSCHUTZ_DATEN;
+const KEY="bimwerk.brandschutz.v1";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const num=(v,d=0)=>Number(v||0).toLocaleString("de-CH",{minimumFractionDigits:d,maximumFractionDigits:d});
+const cm=mm=>num(mm/10,1)+" cm";
+const SIT=Object.fromEntries(D.situationen.map(s=>[s.id,s]));
+
+function defaults(){ return {name:"", sit:"bsk_wand", bauteil:"massivwand", W:200, EI:"EI 60", prod:"fkrs", form:"rund", dn:200, b:600, h:300,
+  mode:"nass", s:50, mat:"stahlbeton", daemm:false, amin:"", amax:"", ausn:"", abschott:"moertel", sys:"", flucht:false,
+  kV:3000, kAndere:false, kSchacht:false, shHoch:false, shNass:true, shBes:false, shGesch:4}; }
+let S; try{ S=Object.assign(defaults(),JSON.parse(localStorage.getItem(KEY)||"{}")); }catch(e){ S=defaults(); }
+const save=()=>{ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} };
+
+/* ---------- Fachlogik ---------- */
+const prodOf=()=>D.produkte[S.prod]||D.produkte.andere;
+const MATOPT={massivwand:[["stahlbeton","Stahlbeton"],["beton","Beton unbewehrt"],["backstein","Mauerwerk Backstein"],["kalksandstein","Mauerwerk Kalksandstein"]],
+  massivdecke:[["stahlbeton","Stahlbeton"],["beton","Beton unbewehrt"]],
+  lbw:[["metall","Metallständer, Gipsplatten, Mineralwolle"],["holz","Holzständer, Gipsplatten, Mineralwolle"]],
+  schachtwand:[["schacht","Metallständer, einseitig beplankt"]]};
+function matOf(){ const o=MATOPT[S.bauteil]||MATOPT.massivwand; if(!o.find(x=>x[0]===S.mat)) S.mat=o[0][0]; return S.mat; }
+function modesFor(p){
+  const bt=D.bauteile[S.bauteil]; const m=[];
+  if(p.manuell) return [["manuell","Gemäss Herstellerangabe"]];
+  if(p.nass) m.push(["nass","Nasseinbau (Mörtel)"]);
+  if(p.weich) m.push(["weich","Weichschott"]);
+  if(p.einbausatz){ if(bt.typ==="massiv"&&p.einbausatz.massiv) m.push(["es_massiv",p.einbausatz.massiv.l]);
+    if(bt.typ==="lbw"&&p.einbausatz.lbw) m.push(["es_lbw",p.einbausatz.lbw.l]); }
+  return m;
+}
+function dims(){ return S.form==="rund" ? {a:+S.dn||0, b:+S.dn||0} : {a:+S.b||0, b:+S.h||0}; } // a=Breite, b=Höhe
+function bskResult(){
+  const p=prodOf(), d=dims(), warn=[], info=[];
+  let smin=null, smax=null, fixedOpen=null, text="", quelle="", alt="";
+  const modes=modesFor(p); if(!modes.find(m=>m[0]===S.mode)) S.mode=modes[0][0];
+  if(p.manuell){ smin=S.amin===""?null:+S.amin; smax=S.amax===""?null:+S.amax; text="Spaltmasse gemäss Einbauanleitung des gewählten Produkts eintragen."; }
+  else if(S.mode==="nass"){ ({smin,smax,text,quelle}=p.nass); alt=p.nass.alt||""; }
+  else if(S.mode==="weich"){ ({smin,smax,text,quelle}=p.weich); }
+  else if(S.mode==="es_massiv"){ const e=p.einbausatz.massiv; const o=e.tabelle[+S.dn]; text=e.text; quelle=e.quelle;
+    if(o){ fixedOpen={a:o,b:o}; } else warn.push("Für DN "+S.dn+" enthält die Tabelle keinen Wert (Nenngrössen: "+Object.keys(e.tabelle).join(", ")+")."); }
+  else if(S.mode==="es_lbw"){ const e=p.einbausatz.lbw; text=e.text; quelle=e.quelle; fixedOpen={a:d.a+e.plus,b:d.b+e.plus}; }
+  if(p.dnMin && S.form==="rund" && (S.dn<p.dnMin||S.dn>p.dnMax)) warn.push(`${p.l}: Nenngrösse ausserhalb ${p.dnMin}–${p.dnMax} mm.`);
+  if(p.form!=="beide" && p.form!==S.form) warn.push("Produkt passt nicht zur gewählten Leitungsform.");
+  if(S.prod==="fkrs"){ const W=+S.W, bt=S.bauteil;
+    const minW=matOf()==="holz"?130:{massivwand:100,massivdecke:100,lbw:S.EI==="EI 30"?75:98,schachtwand:90}[bt];
+    if(W && minW && W<minW) warn.push(`Bauteildicke ${W} mm unter Mindestdicke ${minW} mm (FKRS-EU, Anleitung 09/2016).`);
+    if(matOf()==="holz") info.push("Holzständerwand: FKRS-EU gemäss Anleitung 09/2016 mit W ≥ 130 mm, Nasseinbau □A = DN + max. 150 mm, Laibung und Aufdoppelung aus Beplankungswerkstoff. Einbaudetail der aktuellen Anleitung prüfen.");
+    else if(S.mode==="nass"&&(bt==="lbw"||bt==="schachtwand")) info.push("Leichtbau-/Schachtwand: Einbaudetail der aktuellen Anleitung prüfen (Ausgabe 09/2016: □A = DN + max. 150 mm, d. h. max. 75 mm pro Seite).");
+  }
+  let s=+S.s, open=null;
+  if(fixedOpen){ open=fixedOpen; s=(fixedOpen.a-d.a)/2; }
+  else if(smin!=null && smax!=null){ s=Math.min(Math.max(s,smin),smax); open={a:d.a+2*s,b:d.b+2*s}; }
+  else if(smax!=null){ s=Math.min(s,smax); open={a:d.a+2*s,b:d.b+2*s}; }
+  return {p,d,smin,smax,s,open,fixedOpen,text,quelle,alt,warn,info};
+}
+function reqList(){
+  const V=D.vkf, L=[], sit=S.sit;
+  if(sit.startsWith("bsk")){ L.push(V.bskWo,V.bskKlasse,V.bskEinbau,V.ringspalt,V.aufhaengung,V.kontrolle); }
+  if(sit==="transit"){ L.push(V.transit,V.ringspalt,V.aufhaengung,V.installationen); if(S.flucht) L.push(V.fluchtweg); }
+  if(sit==="ringspalt"){ L.push(V.ringspalt,V.bskWo,V.installationen); }
+  if(sit==="schacht"){ L.push(V.schachtKeinKanal,V.transit,V.ringspalt,V.installationen); if(S.shBes) L.push(V.schachtTrennung); L.push(V.bskWo); }
+  if(sit==="kueche"){ L.push(V.kueche,V.kuecheVent); if(S.kSchacht) L.push(V.kuecheSchacht); L.push(V.ringspalt); }
+  return L;
+}
+function dangerList(){
+  const G=D.gefahren, sit=S.sit, L=[];
+  if(sit.startsWith("bsk")){ L.push(G.version,G.durchbruch,G.klasse,G.zugang,G.kraefte,G.moertel,G.abstand,G.dosen,G.regulier);
+    if(S.mode==="weich") L.push(G.weichschott); if(S.bauteil==="massivwand") L.push(G.hohlraum); L.push(G.abhaengung,G.fremde); }
+  if(sit==="transit") L.push(G.durchbruch,G.fremde,G.abhaengung,G.kraefte);
+  if(sit==="ringspalt") L.push(G.durchbruch,G.fremde,G.kraefte);
+  if(sit==="schacht") L.push(G.schachtKanal,G.fremde,G.abhaengung);
+  if(sit==="kueche") L.push(G.kuecheBsk,G.flex,G.fremde,G.abhaengung);
+  return L;
+}
+function kuecheText(){
+  const v=+S.kV||0;
+  if(!S.kAndere) return "Nur die Küche wird über diese Anlage belüftet: separate Aggregate und Leitungen; Ventilator in eigenem Raum mind. EI 60.";
+  if(v<=4000) return "Gesamtabluft bis 4'000 m³/h: gemeinsame Leitungen und Aggregate für Zu- und Abluft zulässig; Aggregate in separatem Raum mind. EI 60.";
+  if(v<=12000) return "Gesamtabluft 4'000–12'000 m³/h: getrennte Abluftanlagen mit eigenen Leitungen und Aggregaten für Küche und übrige Räume; gemeinsamer Aufstellraum mind. EI 60 möglich, WRG kann gemeinsam erfolgen.";
+  return "Gesamtabluft über 12'000 m³/h: Küchenabluft als eigene Anlage mit eigenen Leitungen und eigenem Ventilator in separatem Raum mind. EI 60.";
+}
+
+/* ---------- Zeichnungen ----------
+   Farben nach SIA 400 (Backstein rot, Kalksandstein grau, Beton grün, Mörtel/Gips violett,
+   Holz gelb-braun, Metall hellblau, Dämmstoffe rosa); Muster nach DIN 1356-1.
+   Zeichnungen immer auf weissem Plangrund, damit sie auch im Dunkelmodus wie ein Plan wirken. */
+const INK="#1A1A1A";
+const MAT={
+  stahlbeton:{l:"Stahlbeton",p:"pSB"}, beton:{l:"Beton unbewehrt",p:"pBE"}, backstein:{l:"Mauerwerk Backstein",p:"pBS"},
+  kalksandstein:{l:"Mauerwerk Kalksandstein",p:"pKS"}, gips:{l:"Gipsplatten (Beplankung, Laibung)",p:"pGI"},
+  daemm:{l:"Mineralwolle / Dämmstoff",p:"pDV"}, holz:{l:"Holz (Ständer, Riegel)",p:"pHO"}, stahl:{l:"Metallprofil / Stahlblech",p:"pST"},
+  moertel:{l:"Mörtel (Nasseinbau)",p:"pMO"}, weich:{l:"Weichschott: Mineralwollplatten, beschichtet",p:"pWS"},
+  bekl:{l:"Brandschutzbekleidung (Plattenbaustoff)",p:"pBK"}, einbausatz:{l:"Einbausatz / Einbaustein",p:"pES"}
+};
+const DEFS=`<defs>
+ <pattern id="pBE" width="24" height="24" patternUnits="userSpaceOnUse"><rect width="24" height="24" fill="#DCEBD2"/>
+   <circle cx="4" cy="5" r=".9" fill="#3F6B31"/><circle cx="15" cy="3" r=".7" fill="#3F6B31"/><circle cx="20" cy="14" r="1" fill="#3F6B31"/><circle cx="7" cy="18" r=".7" fill="#3F6B31"/><circle cx="12" cy="11" r=".6" fill="#3F6B31"/>
+   <path d="M17 20 l3 -4 l1.5 4.5 z M3 11 l2.5 -3 l1 3.5 z M11 22 l2 -3 l1.5 3 z" fill="none" stroke="#3F6B31" stroke-width=".8"/></pattern>
+ <pattern id="pSB" width="24" height="24" patternUnits="userSpaceOnUse"><rect width="24" height="24" fill="url(#pBE)"/>
+   <path d="M-6 6 L6 -6 M0 24 L24 0 M18 30 L30 18" stroke="#3F6B31" stroke-width=".9"/></pattern>
+ <pattern id="pBS" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#F7CDBF"/><line x1="0" y1="0" x2="0" y2="6" stroke="#B5452A" stroke-width="1"/></pattern>
+ <pattern id="pKS" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#E2E2E2"/><line x1="0" y1="0" x2="0" y2="6" stroke="#666" stroke-width="1"/></pattern>
+ <pattern id="pGI" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#E8D9F2"/><circle cx="2" cy="2" r=".45" fill="#7A4E9A"/><circle cx="6" cy="6" r=".45" fill="#7A4E9A"/></pattern>
+ <pattern id="pMO" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="#DCC7EA"/><circle cx="2" cy="2" r=".9" fill="#6A3F8A"/><circle cx="5.5" cy="5" r=".6" fill="#6A3F8A"/></pattern>
+ <pattern id="pDH" width="14" height="10" patternUnits="userSpaceOnUse"><rect width="14" height="10" fill="#FAD7E3"/><path d="M0 9 C3 9 3 1 7 1 C11 1 11 9 14 9" fill="none" stroke="#B8446E" stroke-width=".9"/></pattern>
+ <pattern id="pDV" width="10" height="14" patternUnits="userSpaceOnUse"><rect width="10" height="14" fill="#FAD7E3"/><path d="M9 0 C9 3 1 3 1 7 C1 11 9 11 9 14" fill="none" stroke="#B8446E" stroke-width=".9"/></pattern>
+ <pattern id="pWS" width="10" height="14" patternUnits="userSpaceOnUse"><rect width="10" height="14" fill="#F6C6D6"/><path d="M9 0 C9 3 1 3 1 7 C1 11 9 11 9 14" fill="none" stroke="#9E2F5A" stroke-width="1"/></pattern>
+ <pattern id="pHO" width="20" height="8" patternUnits="userSpaceOnUse"><rect width="20" height="8" fill="#F2DDAA"/><path d="M0 3 Q5 1 10 3 T20 3 M0 7 Q6 5 12 7 T20 7" fill="none" stroke="#9C6B22" stroke-width=".7"/></pattern>
+ <pattern id="pST" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#CFE3F5"/></pattern>
+ <pattern id="pBK" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#E9E4DA"/><path d="M0 6 L6 0 M0 0 L6 6" stroke="#8A8173" stroke-width=".5"/></pattern>
+ <pattern id="pES" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#D9DDE1"/><line x1="0" y1="3" x2="6" y2="3" stroke="#8B949B" stroke-width=".6"/></pattern>
+ <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#B3261E"/></marker>
+ <marker id="ak" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="${INK}"/></marker>
+</defs>`;
+/* Kompatibilität für Piktogramme */
+function mk(vert){
+  const T=(x,y)=>vert?[y,x]:[x,y];
+  return {
+    rect:(x,y,w,h,a)=>{ if(w<=0||h<=0) return ""; const [X,Y]=T(x,y); const [W,H]=vert?[h,w]:[w,h]; return `<rect x="${X}" y="${Y}" width="${W}" height="${H}" ${a||""}/>`; },
+    line:(x1,y1,x2,y2,a)=>{ const [a1,b1]=T(x1,y1),[a2,b2]=T(x2,y2); return `<line x1="${a1}" y1="${b1}" x2="${a2}" y2="${b2}" ${a||""}/>`; },
+    pt:(x,y)=>T(x,y)
+  };
+}
+const fillOf=k=>`fill="url(#${MAT[k].p})"`;
+function leader(g,x1,y1,x2,y2,txt,anchor){
+  const [a,b]=g.pt(x1,y1),[c,d]=g.pt(x2,y2);
+  return `<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${INK}" stroke-width=".6"/><circle cx="${a}" cy="${b}" r="1.6" fill="${INK}"/><text x="${c+(anchor==="end"?-3:3)}" y="${d+3}" font-size="9.5" fill="${INK}" ${anchor==="end"?'text-anchor="end"':""}>${esc(txt)}</text>`;
+}
+/* Wand-/Deckenaufbau zwischen y0..y1 (ein Block ober- bzw. unterhalb der Öffnung) */
+function bauteilBlock(g,mat,wx,tw,y0,y1,px,edge){
+  const h=y1-y0; if(h<=0) return "";
+  const O=`stroke="${INK}" stroke-width="1.1"`;
+  if(["stahlbeton","beton","backstein","kalksandstein"].includes(mat)) return g.rect(wx,y0,tw,h,`${fillOf(mat)} ${O}`);
+  const bp=Math.max(25*px,5);             /* 2 × 12.5 mm Beplankung */
+  let s="";
+  if(mat==="schacht"){ /* einseitig beplankt, Ständer im Hohlraum */
+    s+=g.rect(wx+tw-bp,y0,bp,h,`${fillOf("gips")} ${O}`);
+    s+=g.rect(wx,y0,tw-bp,h,`fill="#FFFFFF" stroke="${INK}" stroke-width=".6" stroke-dasharray="3 2"`);
+    return s;
+  }
+  s+=g.rect(wx,y0,bp,h,`${fillOf("gips")} ${O}`)+g.rect(wx+tw-bp,y0,bp,h,`${fillOf("gips")} ${O}`);
+  s+=g.rect(wx+bp,y0,tw-2*bp,h,`${fillOf("daemm")} stroke="${INK}" stroke-width=".5"`);
+  /* Riegel (Holz) bzw. UW/CW-Profil (Blech, U-Form) an der Öffnungskante */
+  const rh=Math.min(Math.max((mat==="holz"?60:50)*px,5),h*.35), ry=edge==="bottom"?y1-rh:y0, cw=tw-2*bp;
+  if(mat==="holz") s+=g.rect(wx+bp,ry,cw,rh,`${fillOf("holz")} stroke="${INK}" stroke-width=".8"`);
+  else { const web=edge==="bottom"?y1:y0, fl=edge==="bottom"?y1-rh:y0+rh;
+    s+=g.rect(wx+bp,ry,cw,rh,'fill="#FFFFFF"');
+    s+=g.line(wx+bp,web,wx+bp+cw,web,'stroke="#3E6F9E" stroke-width="2.4"');
+    s+=g.line(wx+bp+1,web,wx+bp+1,fl,'stroke="#3E6F9E" stroke-width="2"')+g.line(wx+bp+cw-1,web,wx+bp+cw-1,fl,'stroke="#3E6F9E" stroke-width="2"'); }
+  return s;
+}
+function schnitt(opt){
+  /* opt: vert, W, dA, open, kind bsk|transit|ring, fill moertel|weich|einbausatz, mat, daemm */
+  const g=mk(opt.vert), W=Math.max(opt.W||150,50), dA=Math.max(opt.dA,50), cl=opt.kind==="transit"?40:0, O=Math.max(opt.open||dA+2*cl,dA+2*cl);
+  const px=190/Math.max(O,260), cx=170, cy=160, tw=Math.max(W*px,22), hO=O*px/2, hD=dA*px/2, hC=hD+cl*px, wx=cx-tw/2;
+  const VW=opt.vert?320:380, VH=opt.vert?340:320;
+  const lb=["metall","holz"].includes(opt.mat), laib=lb?Math.max(12.5*px,3):0;
+  let s=`<rect x="0" y="0" width="${VW}" height="${VH}" fill="#FFFFFF"/>`;
+  s+=bauteilBlock(g,opt.mat,wx,tw,18,cy-hO-laib,px,"bottom");
+  s+=bauteilBlock(g,opt.mat,wx,tw,cy+hO+laib,300,px,"top");
+  if(laib){ s+=g.rect(wx,cy-hO-laib,tw,laib,`${fillOf("gips")} stroke="${INK}" stroke-width=".7"`); s+=g.rect(wx,cy+hO,tw,laib,`${fillOf("gips")} stroke="${INK}" stroke-width=".7"`); }
+  /* Füllung der Aussparung */
+  const fk=opt.fill||"moertel";
+  if(hO>hC){ s+=g.rect(wx,cy-hO,tw,hO-hC,`${fillOf(fk)} stroke="${INK}" stroke-width=".6"`); s+=g.rect(wx,cy+hC,tw,hO-hC,`${fillOf(fk)} stroke="${INK}" stroke-width=".6"`);
+    if(fk==="weich"){ [wx,wx+tw].forEach(x=>{ s+=g.line(x,cy-hO,x,cy-hC,'stroke="#B3261E" stroke-width="2"')+g.line(x,cy+hC,x,cy+hO,'stroke="#B3261E" stroke-width="2"'); }); } }
+  /* Leitung */
+  const x0=opt.kind==="bsk"?wx-70:14, x1=opt.kind==="bsk"?Math.min(wx+tw+105,VW-6):VW-14, st=Math.max(1*px,2.2);
+  const dm=opt.daemm&&opt.kind!=="transit", dt=Math.max(40*px,7);
+  if(dm){ const gap=4, segs=opt.kind==="bsk"?[[x0,wx-gap]]:[[x0,wx-gap],[wx+tw+gap,x1]];
+    segs.forEach(([a,b])=>{ if(b-a>4){ s+=g.rect(a,cy-hD-dt,b-a,dt,`fill="url(#pDH)" stroke="${INK}" stroke-width=".5"`); s+=g.rect(a,cy+hD,b-a,dt,`fill="url(#pDH)" stroke="${INK}" stroke-width=".5"`); } }); }
+  if(opt.kind==="transit"){ const c=hC-hD; s+=g.rect(x0,cy-hC,x1-x0,c,`${fillOf("bekl")} stroke="#B3261E" stroke-width="1.2"`); s+=g.rect(x0,cy+hD,x1-x0,c,`${fillOf("bekl")} stroke="#B3261E" stroke-width="1.2"`); }
+  s+=g.rect(x0,cy-hD,x1-x0,2*hD,`fill="#FFFFFF"`);
+  s+=g.rect(x0,cy-hD,x1-x0,st,`${fillOf("stahl")} stroke="${INK}" stroke-width=".6"`)+g.rect(x0,cy+hD-st,x1-x0,st,`${fillOf("stahl")} stroke="${INK}" stroke-width=".6"`);
+  if(opt.kind==="bsk"){
+    s+=g.line(wx,cy-hD,wx,cy+hD,`stroke="${INK}" stroke-width=".5" stroke-dasharray="3 2"`);
+    s+=g.line(cx+tw/2+12,cy-hD+3,cx+tw/2+34,cy+hD-3,'stroke="#B3261E" stroke-width="3"');
+    const [ax,ay]=g.pt(wx+tw+50,cy-hD-22), [aw,ah]=opt.vert?[22,34]:[34,22];
+    s+=`<rect x="${ax}" y="${ay}" width="${aw}" height="${ah}" fill="#B3261E" rx="3"/><text x="${ax+aw/2}" y="${ay+ah/2+4}" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">M</text>`;
+  }
+  /* Masslinien */
+  if(hO>hC){
+    const xs=wx+tw+(opt.kind==="bsk"?-8:10);
+    s+=g.line(xs,cy-hO,xs,cy-hC,'stroke="#B3261E" stroke-width="1.3" marker-start="url(#ar)" marker-end="url(#ar)"');
+    if(opt.vert) s+=`<rect x="20" y="${xs-24}" width="${Math.max(10,cy-hO-24)}" height="17" fill="#FFFFFF" opacity=".9"/><text x="24" y="${xs-11}" fill="#B3261E" font-size="12" font-weight="700">${esc(opt.sLabel||"s")}</text>`;
+    else { const [tx,ty]=g.pt(xs+6,cy-hO-6); s+=`<rect x="${tx-2}" y="${ty-12}" width="${(opt.sLabel||"s").length*7+4}" height="16" fill="#FFFFFF" opacity=".9"/><text x="${tx}" y="${ty}" fill="#B3261E" font-size="12" font-weight="700">${esc(opt.sLabel||"s")}</text>`; }
+    const xo=wx-24;
+    s+=g.line(xo,cy-hO,xo,cy+hO,`stroke="${INK}" stroke-width="1" marker-start="url(#ak)" marker-end="url(#ak)"`);
+    s+=g.line(xo-6,cy-hO,wx,cy-hO,`stroke="${INK}" stroke-width=".5"`)+g.line(xo-6,cy+hO,wx,cy+hO,`stroke="${INK}" stroke-width=".5"`);
+    if(opt.oShort){ if(opt.vert) s+=`<text x="${cy}" y="${xo-8}" font-size="11" font-weight="700" fill="${INK}" text-anchor="middle">${esc(opt.oShort)}</text>`;
+      else s+=`<text x="${xo-6}" y="${cy+4}" font-size="11" font-weight="700" fill="${INK}" text-anchor="end">${esc(opt.oShort)}</text>`; }
+  }
+  /* Beschriftungen mit Hinweislinien */
+  const matName={stahlbeton:"Stahlbeton",beton:"Beton",backstein:"Backstein",kalksandstein:"Kalksandstein",metall:"Leichtbauwand",holz:"Holzständerwand",schacht:"Schachtwand"}[opt.mat]||"";
+  if(!opt.vert){
+    const lx=Math.min(wx+tw+22,VW-110), top=cy-hO-laib-18; let ly=30;
+    const add=(px_,py_,t)=>{ if(ly<cy-hO-14){ s+=leader(g,px_,py_,lx,ly,t); ly+=14; } };
+    if(lb){ const bpx=Math.max(25*px,5);
+      add(wx+bpx/2,24,"Gipsplatten 2 × 12.5 mm"); add(wx+tw/2,18+Math.max(3,(top-Math.max(50*px,5))/2),"Mineralwolle");
+      add(wx+tw/2,cy-hO-laib-2,opt.mat==="holz"?"Holzriegel":"Metallprofil UW/CW"); }
+    else if(opt.mat==="schacht") add(wx+tw-3,30,"Beplankung einseitig");
+    else add(wx+tw*0.5,34,matName);
+    if(hO>hC) s+=leader(g,wx+tw*0.5,cy+hC+(hO-hC)/2,wx-40,296,MAT[fk].l.split(" (")[0].split(":")[0],"end");
+    if(dm) s+=leader(g,x0+16,cy+hD+dt/2,24,276,"Leitungsdämmung");
+    if(dm&&opt.kind==="bsk") s+=`<text x="${x1}" y="${cy+hD+16}" font-size="9.5" fill="#B3261E" text-anchor="end">nicht überdämmen</text>`;
+    if(opt.kind==="transit") s+=leader(g,x1-30,cy+hC-3,x1-8,296,"Bekleidung EI 30","end");
+  } else {
+    s+=`<text x="312" y="${wx-4}" font-size="9.5" fill="${INK}" text-anchor="end">${esc(matName)}</text>`;
+    if(dm&&opt.kind==="bsk") s+=`<text x="312" y="${x1-18}" font-size="9.5" fill="#B3261E" text-anchor="end">nicht überdämmen</text>`;
+  }
+  if(opt.kind==="bsk"){
+    if(opt.vert){ s+=`<text x="312" y="${x0+12}" font-size="11" fill="#555" text-anchor="end">Einbauseite</text><text x="312" y="${x1-4}" font-size="11" fill="#555" text-anchor="end">Bedienungsseite</text>`; }
+    else { s+=`<text x="${Math.max(x0,4)}" y="314" font-size="11" fill="#555">Einbauseite</text><text x="${x1}" y="314" font-size="11" fill="#555" text-anchor="end">Bedienungsseite</text>`; }
+  }
+  const vb=`0 0 ${VW} ${VH}`;
+  return `<svg viewBox="${vb}" role="img" aria-label="Schnitt">${s}<text x="8" y="13" font-size="11" font-weight="700" fill="${INK}">Schnitt</text></svg>`;
+}
+function ansicht(opt){
+  /* opt: round, dA,dB, oA,oB, fill, kind, mat */
+  const O=Math.max(opt.oA||opt.dA,opt.oB||opt.dB,60), px=200/Math.max(O,260), cx=170, cy=150;
+  const oa=(opt.oA||opt.dA)*px/2, ob=(opt.oB||opt.dB)*px/2, da=opt.dA*px/2, db=opt.dB*px/2;
+  const face={stahlbeton:"#E9F2E3",beton:"#E9F2E3",backstein:"#FBE3DA",kalksandstein:"#EFEFEF",metall:"#F2EAF7",holz:"#F2EAF7",schacht:"#F2EAF7"}[opt.mat]||"#F4F4F4";
+  let s=`<rect x="0" y="0" width="340" height="320" fill="#FFFFFF"/><rect x="20" y="22" width="300" height="258" fill="${face}" stroke="${INK}" stroke-width="1"/>`;
+  const lb=["metall","holz","schacht"].includes(opt.mat);
+  if(lb){ /* Ständer verdeckt, Riegel und Laibung sichtbar */
+    const fr=Math.max(50*px,5);
+    [cx-oa-fr-2,cx+oa+2].forEach(x=>{ s+=`<rect x="${x}" y="22" width="${fr}" height="258" fill="none" stroke="${INK}" stroke-width=".6" stroke-dasharray="4 3"/>`; });
+    s+=`<rect x="${cx-oa-6}" y="${cy-ob-6}" width="${2*oa+12}" height="${2*ob+12}" fill="url(#${opt.mat==="holz"?"pHO":"pST"})" stroke="${INK}" stroke-width=".8"/>`;
+  }
+  const f=`fill="url(#${MAT[opt.fill||"moertel"].p})"`;
+  const shape=(a,b,attr)=> opt.round ? `<ellipse cx="${cx}" cy="${cy}" rx="${a}" ry="${b}" ${attr}/>` : `<rect x="${cx-a}" y="${cy-b}" width="${2*a}" height="${2*b}" ${attr}/>`;
+  s+=shape(oa,ob,`${f} stroke="${INK}" stroke-width="1.2"`);
+  if(opt.fill==="weich") s+=shape(oa,ob,'fill="none" stroke="#B3261E" stroke-width="2"');
+  if(opt.kind==="transit") s+=shape(da+40*px,db+40*px,`fill="url(#pBK)" stroke="#B3261E" stroke-width="1.2"`);
+  s+=shape(da,db,`fill="#FFFFFF" stroke="${INK}" stroke-width="2.2"`)+shape(da-2,db-2,'fill="none" stroke="#9CC3E8" stroke-width="1.5"');
+  if(opt.kind==="bsk") s+=`<line x1="${cx-da*.7}" y1="${cy}" x2="${cx+da*.7}" y2="${cy}" stroke="#B3261E" stroke-width="3"/>`;
+  const dc=opt.kind==="transit"?da+40*px:da;
+  if(oa>dc){
+    s+=`<line x1="${cx+dc}" y1="${cy}" x2="${cx+oa}" y2="${cy}" stroke="#B3261E" stroke-width="1.3" marker-start="url(#ar)" marker-end="url(#ar)"/>`;
+    s+=`<rect x="${cx+(dc+oa)/2-8}" y="${cy-20}" width="16" height="15" fill="#FFFFFF" opacity=".9"/><text x="${cx+(dc+oa)/2}" y="${cy-8}" font-size="12" font-weight="700" fill="#B3261E" text-anchor="middle">${esc(opt.sLabel||"s")}</text>`;
+  }
+  const yb=Math.min(cy+ob+(lb?26:18),292);
+  s+=`<line x1="${cx-oa}" y1="${yb}" x2="${cx+oa}" y2="${yb}" stroke="${INK}" stroke-width="1" marker-start="url(#ak)" marker-end="url(#ak)"/>`;
+  const lw=Math.max(60,(opt.oLabel||"").length*7.4); s+=`<rect x="${cx-lw/2}" y="${yb+3}" width="${lw}" height="16" fill="#FFFFFF" opacity=".9"/><text x="${cx}" y="${yb+15}" font-size="12" font-weight="700" fill="${INK}" text-anchor="middle">${esc(opt.oLabel||"")}</text>`;
+  return `<svg viewBox="0 0 340 320" role="img" aria-label="Ansicht">${s}<text x="8" y="14" font-size="11" font-weight="700" fill="${INK}">Ansicht Bauteil</text></svg>`;
+}
+function schachtSVG(){
+  let s=`<rect x="0" y="0" width="340" height="334" fill="#FFFFFF"/>`;
+  s+=`<rect x="80" y="10" width="14" height="300" fill="url(#pGI)" stroke="${INK}"/><rect x="246" y="10" width="14" height="300" fill="url(#pSB)" stroke="${INK}"/>`;
+  [0,1,2].forEach(i=>{ const y=40+i*100;
+    s+=`<rect x="20" y="${y}" width="60" height="18" fill="url(#pSB)" stroke="${INK}"/><rect x="260" y="${y}" width="60" height="18" fill="url(#pSB)" stroke="${INK}"/>`;
+    s+=`<rect x="94" y="${y}" width="152" height="18" fill="url(#pMO)" stroke="${INK}" stroke-width=".6"/>`; });
+  [128,196].forEach(x=>{ s+=`<rect x="${x}" y="12" width="28" height="296" fill="#FFFFFF" stroke="${INK}" stroke-width="1"/><rect x="${x}" y="12" width="3" height="296" fill="#CFE3F5"/><rect x="${x+25}" y="12" width="3" height="296" fill="#CFE3F5"/>`; });
+  if(S.shBes) s+=`<rect x="170" y="12" width="10" height="296" fill="url(#pBK)" stroke="#B3261E" stroke-width="1.2"/><text x="300" y="130" font-size="10" fill="#B3261E" text-anchor="middle">Trennung 30 min</text>`;
+  s+=`<text x="170" y="326" font-size="11" fill="#555" text-anchor="middle">Ringspalt je Decke verschlossen</text>`;
+  return `<svg viewBox="0 0 340 334" role="img" aria-label="Schacht">${s}<text x="8" y="13" font-size="11" font-weight="700" fill="${INK}">Schnitt Schacht</text></svg>`;
+}
+function kuecheSVG(){
+  let s=`<rect x="0" y="0" width="340" height="320" fill="#FFFFFF"/><rect x="150" y="20" width="30" height="280" fill="url(#pSB)" stroke="${INK}"/>`;
+  s+=`<text x="70" y="32" font-size="11" fill="#555" text-anchor="middle">Küche</text><text x="258" y="32" font-size="11" fill="#555" text-anchor="middle">ausserhalb Küche</text>`;
+  s+=`<path d="M30 220 L110 220 L95 190 L45 190 Z" fill="#CFE3F5" stroke="${INK}"/><rect x="48" y="186" width="44" height="5" fill="#E2E2E2" stroke="${INK}" stroke-width=".6"/><text x="70" y="240" font-size="10" fill="#555" text-anchor="middle">Haube mit Fettabscheider</text>`;
+  s+=`<rect x="62" y="120" width="16" height="70" fill="#FFFFFF" stroke="${INK}" stroke-width="1.6"/>`;
+  s+=`<rect x="62" y="104" width="266" height="22" fill="#FFFFFF" stroke="${INK}" stroke-width="1.6"/>`;
+  s+=`<rect x="150" y="98" width="30" height="34" fill="url(#pMO)" stroke="${INK}" stroke-width=".6"/><rect x="62" y="104" width="266" height="22" fill="none" stroke="${INK}" stroke-width="1.6"/>`;
+  s+=`<rect x="180" y="95" width="148" height="9" fill="url(#pBK)" stroke="#B3261E"/><rect x="180" y="126" width="148" height="9" fill="url(#pBK)" stroke="#B3261E"/>`;
+  s+=`<text x="254" y="160" font-size="10.5" fill="#B3261E" text-anchor="middle">Bekleidung mind. EI 30</text><text x="254" y="174" font-size="10.5" fill="#B3261E" text-anchor="middle">RF1 dauerwärmebeständig</text>`;
+  return `<svg viewBox="0 0 340 320" role="img" aria-label="Küchenabluft">${s}<text x="8" y="13" font-size="11" font-weight="700" fill="${INK}">Schema Küchenabluft</text></svg>`;
+}
+function legende(keys){
+  return `<div class="legend-mat">${keys.map(k=>`<span><svg width="26" height="16" aria-hidden="true"><rect width="26" height="16" fill="url(#${MAT[k].p})" stroke="${INK}" stroke-width=".6"/></svg>${esc(MAT[k].l)}</span>`).join("")}
+    <span><svg width="26" height="16" aria-hidden="true"><rect width="26" height="16" fill="#fff" stroke="${INK}"/><line x1="3" y1="13" x2="23" y2="3" stroke="#B3261E" stroke-width="3"/></svg>Klappenblatt BSK</span></div>
+    <p class="hint" style="margin:4px 0 0">Farben nach SIA 400 (Planbearbeitung), Schraffurmuster nach DIN 1356-1. Zeichnung schematisch, Proportionen aus den Eingaben.</p>`;
+}
+/* Kachel-Piktogramme */
+function pict(id){
+  const w='fill="url(#pSB)" stroke="#1A1A1A" stroke-width=".8"', d='fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1.6"';
+  const bsk='<line x1="72" y1="30" x2="84" y2="50" stroke="#B3261E" stroke-width="3"/>';
+  const P={
+    bsk_wand:`<rect x="55" y="4" width="18" height="72" ${w}/><rect x="55" y="22" width="18" height="6" fill="url(#pMO)"/><rect x="55" y="52" width="18" height="6" fill="url(#pMO)"/><rect x="8" y="28" width="104" height="24" ${d}/>${bsk}`,
+    bsk_decke:`<rect x="4" y="30" width="112" height="16" ${w}/><rect x="42" y="30" width="6" height="16" fill="url(#pMO)"/><rect x="72" y="30" width="6" height="16" fill="url(#pMO)"/><rect x="48" y="4" width="24" height="72" ${d}/><line x1="50" y1="52" x2="70" y2="62" stroke="#B3261E" stroke-width="3"/>`,
+    bsk_lbw:`<rect x="55" y="4" width="18" height="72" fill="url(#pDV)" stroke="#1A1A1A" stroke-width=".8"/><rect x="55" y="4" width="4" height="72" fill="url(#pGI)" stroke="#1A1A1A" stroke-width=".5"/><rect x="69" y="4" width="4" height="72" fill="url(#pGI)" stroke="#1A1A1A" stroke-width=".5"/><rect x="8" y="28" width="104" height="24" ${d}/>${bsk}`,
+    transit:`<rect x="55" y="4" width="18" height="72" ${w}/><rect x="4" y="23" width="112" height="5" fill="url(#pBK)" stroke="#B3261E" stroke-width=".8"/><rect x="4" y="52" width="112" height="5" fill="url(#pBK)" stroke="#B3261E" stroke-width=".8"/><rect x="4" y="28" width="112" height="24" ${d}/>`,
+    ringspalt:`<rect x="55" y="4" width="18" height="72" ${w}/><rect x="55" y="20" width="18" height="40" fill="url(#pMO)"/><rect x="4" y="28" width="112" height="24" ${d}/>`,
+    schacht:`<rect x="4" y="18" width="112" height="10" ${w}/><rect x="4" y="54" width="112" height="10" ${w}/><rect x="40" y="2" width="14" height="76" ${d}/><rect x="66" y="2" width="14" height="76" ${d}/>`,
+    kueche:`<path d="M8 66 L44 66 L38 52 L14 52 Z" fill="#CFE3F5" stroke="#1A1A1A"/><rect x="22" y="22" width="10" height="30" ${d}/><rect x="22" y="16" width="94" height="12" ${d}/><rect x="66" y="12" width="50" height="4" fill="url(#pBK)" stroke="#B3261E" stroke-width=".6"/><rect x="66" y="28" width="50" height="4" fill="url(#pBK)" stroke="#B3261E" stroke-width=".6"/><rect x="56" y="4" width="10" height="72" ${w}/>`
+  };
+  return `<svg viewBox="0 0 120 80" aria-hidden="true"><rect width="120" height="80" fill="#FFFFFF"/>${P[id]||""}</svg>`;
+}
+
+/* ---------- Rendering ---------- */
+const opt=(v,l,sel)=>`<option value="${v}" ${sel?"selected":""}>${esc(l)}</option>`;
+function fld(id,label,val,step,w){ return `<div class="field"><label for="f_${id}">${label}</label><input type="number" id="f_${id}" data-s="${id}" value="${esc(val)}" step="${step||1}" min="0" style="width:${w||110}px"></div>`; }
+function renderMain(){
+  const sit=SIT[S.sit];
+  let h=`<section class="card"><h2><span class="no">1</span>Situation</h2><p class="sub">Welche Art von Durchdringung liegt vor?</p><div class="body">
+    <div class="tiles">${D.situationen.map(t=>`<button type="button" class="tile" data-sit="${t.id}" aria-pressed="${S.sit===t.id}">${pict(t.id)}<b>${esc(t.l)}</b><span>${esc(t.d)}</span></button>`).join("")}</div>
+    <p class="printonly"><b>${esc(sit.l)}</b> – ${esc(sit.d)}</p>
+    <div class="row" style="margin-top:12px"><div class="field"><label for="f_name">Projekt / Position</label><input type="text" id="f_name" class="w-name" data-t="name" value="${esc(S.name)}" placeholder="z. B. Überbauung Rheinweg, BSK 2.OG Achse C"></div></div>
+  </div></section>`;
+  h+=`<section class="card"><h2><span class="no">2</span>Bauteil und Leitung</h2><div class="body">`;
+  const showBauteil=["bsk_wand","bsk_lbw","bsk_decke","transit","ringspalt"].includes(S.sit);
+  if(showBauteil){
+    const allowed=S.sit==="bsk_lbw"?["lbw","schachtwand"]:S.sit==="bsk_decke"?["massivdecke"]:S.sit==="bsk_wand"?["massivwand"]:["massivwand","massivdecke","lbw","schachtwand"];
+    if(!allowed.includes(S.bauteil)) S.bauteil=allowed[0];
+    h+=`<div class="row"><div class="field"><label for="f_bauteil">Bauteil</label><select id="f_bauteil" data-t="bauteil">${allowed.map(k=>opt(k,D.bauteile[k].l,S.bauteil===k)).join("")}</select></div>
+      <div class="field"><label for="f_mat">Aufbau / Material</label><select id="f_mat" data-t="mat">${(MATOPT[S.bauteil]||[]).map(o=>opt(o[0],o[1],matOf()===o[0])).join("")}</select></div>
+      ${fld("W","Bauteildicke mm",S.W,10)}
+      <div class="field"><label for="f_EI">Gefordert (Brandschutzkonzept)</label><select id="f_EI" data-t="EI">${["EI 30","EI 60","EI 90","EI 120"].map(v=>opt(v,v,S.EI===v)).join("")}</select></div></div>`;
+    h+=`<div class="row"><div class="field"><span class="lbl">Leitungsform</span><div class="seg" role="group">
+      <button type="button" data-form="rund" aria-pressed="${S.form==="rund"}">Rund</button><button type="button" data-form="eckig" aria-pressed="${S.form==="eckig"}">Rechteckig</button></div></div>
+      ${S.form==="rund"?fld("dn","Durchmesser DN mm",S.dn,5):fld("b","Breite B mm",S.b,10)+fld("h","Höhe H mm",S.h,10)}</div>
+      <div class="chk"><label><input type="checkbox" data-c="daemm" ${S.daemm?"checked":""}> Leitung wärmegedämmt (z. B. Aussen- oder Fortluft)</label></div>`;
+  }
+  if(S.sit==="schacht"){
+    h+=`<div class="chk">
+      <label><input type="checkbox" data-c="shNass" ${S.shNass?"checked":""}> Nur Nasszellen, Wohnungsküchen u. dgl. angeschlossen</label>
+      <label><input type="checkbox" data-c="shHoch" ${S.shHoch?"checked":""}> Hochhaus</label>
+      <label><input type="checkbox" data-c="shBes" ${S.shBes?"checked":""}> Leitungen besonderer Anlagen im selben Schacht (Temperatur > 85 °C, Ex, aggressive Medien, Küchenabluft)</label></div>
+      <div class="row" style="margin-top:10px">${fld("shGesch","Angeschlossene Geschosse je Steigkanal",S.shGesch,1)}</div>`;
+  }
+  if(S.sit==="kueche"){
+    h+=`<div class="row">${fld("kV","Gesamte Abluftmenge m³/h",S.kV,500,140)}</div><div class="chk">
+      <label><input type="checkbox" data-c="kAndere" ${S.kAndere?"checked":""}> Weitere Räume ausser der Küche mit Zu- und Abluft</label>
+      <label><input type="checkbox" data-c="kSchacht" ${S.kSchacht?"checked":""}> Küchenabluft im Installationsschacht geführt</label></div>`;
+  }
+  h+=`</div></section>`;
+  /* Lösung */
+  if(S.sit.startsWith("bsk")){
+    const pAll=Object.entries(D.produkte).filter(([k,p])=>p.form==="beide"||p.form===S.form);
+    if(!pAll.find(([k])=>k===S.prod)) S.prod=pAll[0][0];
+    const p=prodOf(), modes=modesFor(p); if(!modes.find(m=>m[0]===S.mode)) S.mode=modes[0][0];
+    const R=bskResult();
+    h+=`<section class="card"><h2><span class="no">3</span>Brandschutzklappe und Einbauart</h2><div class="body">
+      <div class="row"><div class="field"><label for="f_prod">Produkt</label><select id="f_prod" data-t="prod" style="min-width:280px">${pAll.map(([k,p])=>opt(k,p.l,S.prod===k)).join("")}</select></div>
+      <div class="field"><label for="f_mode">Einbauart</label><select id="f_mode" data-t="mode">${modes.map(m=>opt(m[0],m[1],S.mode===m[0])).join("")}</select></div></div>`;
+    if(p.manuell) h+=`<div class="row">${fld("amin","Spalt min. mm",S.amin,5)}${fld("amax","Spalt max. mm",S.amax,5)}</div><p class="hint">Werte aus der Einbauanleitung zur Leistungserklärung bzw. VKF-Technischen Auskunft übernehmen. Herstellerlinks siehe unten.</p>`;
+    if(!R.fixedOpen && R.smax!=null){
+      const lo=R.smin??0;
+      h+=`<div class="field" style="margin-top:4px"><label for="f_s">Gewählter Spalt s pro Seite</label><div class="srow"><input type="range" id="f_s" data-s="s" min="${lo}" max="${R.smax}" step="5" value="${R.s}"><input type="number" data-s="s" value="${R.s}" min="${lo}" max="${R.smax}" step="5" aria-label="Spalt mm"></div>
+        <small>zulässiger Bereich ${num(lo)} – ${num(R.smax)} mm</small></div>`;
+    }
+    h+=`<p class="hint">${esc(R.text)}</p>${R.alt?`<p class="warnbox"><b>Achtung Version:</b> ${esc(R.alt)}</p>`:""}</div></section>`;
+  }
+  if(S.sit==="ringspalt"){
+    h+=`<section class="card"><h2><span class="no">3</span>Ausnahme und Verschluss</h2><div class="body">
+      <p class="hint" style="margin-top:0">Auf eine Brandschutzklappe kann nur verzichtet werden, wenn eine Ausnahme nach VKF 25-15 Ziff. 3.8.2 Abs. 2 zutrifft:</p>
+      <div class="chk">${D.ausnahmen.map(a=>`<label><input type="radio" name="ausn" data-ausn="${a.id}" ${S.ausn===a.id?"checked":""}> <span><b>${a.id})</b> ${esc(a.t)}</span></label>`).join("")}
+      <label><input type="radio" name="ausn" data-ausn="keine" ${S.ausn==="keine"?"checked":""}> <span><b>Keine</b> der Ausnahmen trifft zu</span></label></div>
+      <div class="row" style="margin-top:12px"><div class="field"><label for="f_abs">Verschluss der Aussparung</label><select id="f_abs" data-t="abschott">
+        ${opt("moertel","RF1-Baustoff (Mörtel, Gips) – dicht verschliessen",S.abschott==="moertel")}${opt("system","Abschottungssystem EI 30 (bzw. gleich Bauteil)",S.abschott==="system")}</select></div>
+      ${fld("sys","Spalt gemäss System mm (optional)",S.sys,5,150)}</div></div></section>`;
+  }
+  if(S.sit==="transit"){
+    h+=`<section class="card"><h2><span class="no">3</span>Transitleitung</h2><div class="body"><div class="chk">
+      <label><input type="checkbox" data-c="flucht" ${S.flucht?"checked":""}> Führung durch Schleuse oder vertikalen Fluchtweg</label></div>
+      <div class="row" style="margin-top:10px">${fld("sys","Spalt gemäss Systemnachweis mm (optional)",S.sys,5,150)}</div>
+      <p class="hint">Aussparungsmasse für EI-30-Leitungen bzw. Bekleidungen ergeben sich aus dem Nachweis des Systems (VKF-Anerkennung / Technische Auskunft des Herstellers) – die VKF-Richtlinie selbst nennt kein Mass.</p></div></section>`;
+  }
+  $("#main").innerHTML=h;
+}
+function resultModel(){
+  const sit=S.sit, m={title:"",lines:[],figs:[],svgA:"",svgB:"",warn:[],info:[]};
+  const bt=D.bauteile[S.bauteil]||D.bauteile.massivwand, vert=bt.orient==="decke", d=dims();
+  if(sit.startsWith("bsk")){
+    const R=bskResult(); m.warn=R.warn; m.info=R.info;
+    const fill=S.mode==="weich"?"weich":S.mode.startsWith("es_")?"einbausatz":"moertel", mat=matOf();
+    const oA=R.open?R.open.a:d.a, oB=R.open?R.open.b:d.b;
+    const round=S.form==="rund"&&bt.typ==="massiv"&&(S.mode==="nass"||S.mode==="es_massiv"||S.mode==="manuell");
+    const sL=`s = ${num(R.s)} mm`;
+    m.legend=legKeys(mat,fill,"bsk");
+    m.svgA=schnitt({vert,W:+S.W,dA:d.b,open:oB,kind:"bsk",fill,mat,daemm:S.daemm,sLabel:sL,oShort:R.open?(round?"Ø"+num(oB):num(oB)):""});
+    m.svgB=ansicht({round,dA:d.a,dB:d.b,oA,oB,fill,mat,kind:"bsk",sLabel:"s",oLabel:R.open?(round?`Ø ${num(oA)} mm`:`${num(oA)} × ${num(oB)} mm`):"Aussparung"});
+    if(R.fixedOpen) m.figs.push({main:true,l:"Aussparung (fix, Einbausatz)",v:round?`Ø ${num(oA)} mm`:`${num(oA)} × ${num(oB)} mm`,sub:`entspricht ${cm(R.s)} pro Seite`});
+    else if(R.smax!=null){
+      m.figs.push({main:true,l:"Spalt pro Seite",v:`${R.smin!=null?num(R.smin/10,1)+" – ":"≤ "}${num(R.smax/10,1)} cm`,sub:R.smin!=null?`min. ${num(R.smin)} mm empfohlen, max. ${num(R.smax)} mm zulässig`:`max. ${num(R.smax)} mm`});
+      const lo=R.smin||0;
+      m.figs.push({l:"Aussparung min. – max."+(round?"":" (quadratisch/rechteckig)"),v:round?`Ø ${num(d.a+2*lo)} – ${num(d.a+2*R.smax)} mm`:`${num(d.a+2*lo)}×${num(d.b+2*lo)} – ${num(d.a+2*R.smax)}×${num(d.b+2*R.smax)} mm`});
+      m.figs.push({l:"Gewählt",v:round?`Ø ${num(oA)} mm`:`${num(oA)} × ${num(oB)} mm`,sub:`s = ${cm(R.s)} pro Seite`});
+    } else m.figs.push({main:true,l:"Spalt pro Seite",v:"gemäss Hersteller",sub:"Werte eintragen"});
+    const p=R.p, massiv=bt.typ==="massiv";
+    if(S.mode==="nass"&&massiv&&p.abstandTragend) m.figs.push({l:"Abstand zu tragenden Bauteilen",v:`≥ ${p.abstandTragend} mm`,sub:"Nasseinbau, gemäss Anleitung"});
+    if(S.mode==="nass"&&massiv&&p.abstandKlappen){ const ab=(S.prod==="fkrs"&&S.bauteil==="massivdecke")?45:p.abstandKlappen;
+      m.figs.push({l:"Abstand zwischen Klappen",v:`≥ ${ab} mm`,sub:S.prod==="fk2"?"Flansch an Flansch":(S.bauteil==="massivdecke"?"Nasseinbau Massivdecke":"Nasseinbau Massivwand")}); }
+    if(!massiv&&S.prod==="fkrs") m.info.push("Abstände Leichtbau-/Holzständerwand gemäss Einbaudetail (FKRS-EU 09/2016, Nasseinbau: zu tragenden Bauteilen ≥ 40 mm, bei EI 120 ≥ 75 mm; zwischen zwei Klappen in getrennten Öffnungen ≥ 200 mm). Einbau nur in quadratischen Öffnungen.");
+    m.title=`${prodOf().l} · ${(modesFor(prodOf()).find(x=>x[0]===S.mode)||["",""])[1]} · ${(MATOPT[S.bauteil]||[]).find(o=>o[0]===mat)?.[1]||bt.l} ${S.W} mm`;
+    if(p.bauteile) m.info.push(p.bauteile); if(p.bedienmass) m.info.push(p.bedienmass);
+    m.lines.push(`Geforderter Feuerwiderstand ${S.EI}: Klassifizierung der Klappe für genau diesen Einbau (Bauteil, Einbauart, Einbaulage) in Leistungserklärung bzw. VKF-Technischer Auskunft nachweisen. BSK mind. EI 30-S.`);
+  }
+  if(sit==="transit"||sit==="ringspalt"){
+    const sys=S.sys===""?null:+S.sys, sShow=sys??Math.max(20,Math.round(Math.min(d.a,d.b)*.12));
+    const cl=sit==="transit"?80:0, oA=d.a+cl+2*sShow, oB=d.b+cl+2*sShow, round=S.form==="rund"&&bt.typ==="massiv";
+    const rf=sit==="ringspalt"&&S.abschott==="system"?"weich":"moertel", mat=matOf(); m.legend=legKeys(mat,rf,sit);
+    m.svgA=schnitt({vert,W:+S.W,dA:d.b,open:oB,kind:sit==="transit"?"transit":"ring",fill:rf,mat,daemm:S.daemm,sLabel:sys!=null?`s = ${num(sys)} mm`:"s"});
+    m.svgB=ansicht({round,dA:d.a,dB:d.b,oA,oB,fill:rf,mat,kind:sit==="transit"?"transit":"ring",sLabel:"s",oLabel:sys!=null?(round?`Ø ${num(oA)} mm`:`${num(oA)} × ${num(oB)} mm`):"gemäss Systemnachweis"});
+    m.figs.push({main:true,l:"Spalt pro Seite",v:sys!=null?cm(sys):"gemäss System",sub:sys!=null?"eingegebener Systemwert":"VKF nennt kein Mass – Systemnachweis massgebend"});
+    if(sit==="transit"){ m.figs.push({l:"Feuerwiderstand Leitung",v:S.flucht?"wie Brandabschnitt, mind. EI 30":"EI 30",sub:"VKF 25-15 Ziff. 3.7.6"}); m.title="Transitleitung durch fremden Brand- oder Lüftungsabschnitt"; }
+    else {
+      m.title="Durchführung ohne Brandschutzklappe";
+      if(S.ausn==="keine"){ m.warn.push("Keine Ausnahme nach Ziff. 3.8.2 Abs. 2 zutreffend: Brandschutzklappe erforderlich (oder Transitleitung EI 30)."); m.figs.unshift({main:true,l:"Ergebnis",v:"BSK erforderlich",sub:"keine Ausnahme"}); }
+      else if(!S.ausn) m.info.push("Ausnahme wählen, um den Verzicht auf die Brandschutzklappe zu begründen.");
+      else m.figs.push({l:"Begründung",v:"Ausnahme "+S.ausn+")",sub:"VKF 25-15 Ziff. 3.8.2 Abs. 2"});
+      m.figs.push({l:"Verschluss",v:S.abschott==="system"?"Abschottung EI 30":"RF1 dicht",sub:S.abschott==="system"?"bei grosser Brandbelastung gleich Bauteil":"Mörtel, Gips – Wärmedehnung beachten"});
+    }
+  }
+  if(sit==="schacht"){
+    m.title="Vertikale Leitungen im Installationsschacht"; m.svgA=schachtSVG(); m.svgB=""; m.legend=["stahlbeton","gips","moertel","stahl"].concat(S.shBes?["bekl"]:[]);
+    const bskFrei = S.shHoch ? (S.shNass && +S.shGesch<=5) : S.shNass;
+    m.figs.push({main:true,l:"Brandschutzklappen in den Decken",v:bskFrei?"Verzicht möglich":"erforderlich / prüfen",sub:bskFrei?(S.shHoch?"Ausnahme f) – max. 5 Geschosse je Steigkanal":"Ausnahme d) – Nasszellen"):"sonst BSK oder Leitungen EI 30"});
+    if(S.shHoch && S.shNass && +S.shGesch>5) m.warn.push("Hochhaus mit mehr als 5 Geschossen je Steigkanal: Ausnahme f) nicht erfüllt.");
+    if(S.shBes) m.figs.push({l:"Trennung im Schacht",v:"30 min, RF1",sub:"VKF 25-15 Ziff. 4.3.4"});
+    m.lines.push("Deckendurchführungen im Schacht: Ringspalt mit RF1-Baustoffen dicht verschliessen oder Abschottung EI 30 (Ziff. 3.7.8). Wird eine BSK in der Decke eingebaut, Situation «BSK in Massivdecke» für die Masse verwenden.");
+  }
+  if(sit==="kueche"){
+    m.title="Küchenabluft gewerblich"; m.svgA=kuecheSVG(); m.svgB=""; m.legend=["stahlbeton","moertel","bekl","stahl"];
+    m.figs.push({main:true,l:"Leitung ausserhalb Küche",v:"mind. EI 30",sub:"RF1 dauerwärmebeständig, keine flexiblen Leitungen"});
+    m.figs.push({l:"Ventilatorraum",v:"mind. EI 60",sub:"Ziff. 4.2.3 Abs. 3"});
+    m.lines.push(kuecheText());
+    if(S.kSchacht) m.lines.push("Im Schacht: Küchenabluftleitungen voneinander und von anderen Installationen mit Brandschutzplatte 30 Minuten (RF1, dauerwärmebeständig) abtrennen.");
+  }
+  return m;
+}
+function legKeys(mat,fill,kind){
+  const k=[];
+  if(["stahlbeton","beton","backstein","kalksandstein"].includes(mat)) k.push(mat);
+  if(mat==="metall") k.push("gips","daemm","stahl"); if(mat==="holz") k.push("gips","daemm","holz"); if(mat==="schacht") k.push("gips");
+  if(!k.includes(fill)) k.push(fill); if(!k.includes("stahl")) k.push("stahl");
+  if(kind==="transit") k.push("bekl"); if(S.daemm&&!k.includes("daemm")) k.push("daemm");
+  return k;
+}
+function renderResult(){
+  const m=resultModel(), f0=m.figs[0]||{};
+  $("#res").innerHTML=`<h2>Ergebnis</h2><div class="bigl">${esc(f0.l||"")}</div><div class="big" style="color:var(--fire)">${esc(f0.v||"–")}</div><div class="bigl">${esc(f0.sub||"")}</div>
+    <dl class="kv">${m.figs.slice(1).map(f=>`<dt>${esc(f.l)}</dt><dd>${esc(f.v)}</dd>`).join("")}</dl>
+    ${m.warn.length?`<ul class="warns">${m.warn.map(w=>`<li class="bad">${esc(w)}</li>`).join("")}</ul>`:""}`;
+  $("#mbar").innerHTML=`<span>${esc(f0.l||"")}<br><b>${esc(f0.v||"–")}</b></span><a href="#below">Details</a>`;
+  $("#phName").textContent=(S.name||SIT[S.sit].l)+" · "+new Date().toLocaleDateString("de-CH");
+  const ico=`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L23 21 H1 Z" fill="var(--fire)"/><rect x="11" y="8" width="2" height="7" fill="#fff"/><rect x="11" y="17" width="2" height="2" fill="#fff"/></svg>`;
+  const q=k=>D.quellen[k];
+  $("#below").innerHTML=`
+  <section class="card"><h2>Darstellung</h2><p class="sub">${esc(m.title)} – Zeichnung schematisch, Proportionen aus den Eingaben.</p>
+    <div class="draw" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px">${m.svgA}${m.svgB}</div>
+    ${m.legend?`<div class="body" style="padding-top:4px;padding-bottom:10px">${legende(m.legend)}</div>`:""}
+    <div class="keyfig">${m.figs.map(f=>`<div class="kf ${f.main?"main":""}"><small>${esc(f.l)}</small><b>${esc(f.v)}</b>${f.sub?`<small>${esc(f.sub)}</small>`:""}</div>`).join("")}</div>
+    ${m.lines.length||m.info.length?`<div class="body" style="padding-top:0">${m.lines.map(l=>`<p class="hint" style="color:var(--ink)">${esc(l)}</p>`).join("")}${m.info.map(l=>`<p class="hint">${esc(l)}</p>`).join("")}</div>`:""}
+  </section>
+  <section class="card"><h2>Was die Situation verlangt</h2><p class="sub">VKF-Brandschutzrichtlinie 25-15 «Lufttechnische Anlagen», sinngemäss zusammengefasst.</p><div class="body"><ul class="reqs">
+    ${reqList().map(r=>`<li><span class="z">Ziff. ${esc(r.z)}</span><span>${esc(r.t)}</span></li>`).join("")}</ul></div></section>
+  <section class="card"><h2>Gefahren und typische Fehler</h2><div class="body"><ul class="dangers">
+    ${dangerList().map(g=>`<li>${ico}<span>${esc(g.t)} <small>(${esc(q(g.q).org)} – ${esc(q(g.q).titel)})</small></span></li>`).join("")}</ul></div></section>
+  <section class="card"><h2>Herstellerdokumentation und Register</h2><div class="body"><ul class="links">
+    ${Object.values(D.quellen).filter(x=>x.org==="TROX").map(x=>`<li><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.org)} – ${esc(x.titel)}</a> <span class="src">Ausgabe ${esc(x.ausgabe)}</span></li>`).join("")}
+    ${D.hersteller.map(x=>`<li><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.name)}</a></li>`).join("")}
+    <li><a href="${esc(D.quellen.vkf2515.link)}" target="_blank" rel="noopener">VKF-Brandschutzvorschriften (bsvonline.ch)</a> <span class="src">25-15, ${esc(D.quellen.vkf2515.ausgabe)}</span></li></ul>
+    <p class="hint">Masse in diesem Tool nur für die genannten TROX-Produkte und Anleitungsausgaben. Für andere Produkte die Einbauanleitung zur Leistungserklärung bzw. VKF-Technischen Auskunft verwenden (VKF-Brandschutzregister).</p></div></section>
+  <p class="hint" style="margin:0 0 30px;max-width:110ch">Dieser Brandschutzcheck dient der Vorbereitung und Koordination. Er ersetzt weder das Brandschutzkonzept noch die Einbauanleitung des Herstellers noch die Abnahme durch die Brandschutzbehörde. Massgebend sind die VKF-Brandschutzvorschriften, die Leistungserklärung bzw. VKF-Technische Auskunft und die Anleitung zum gelieferten Produkt. Fachstand des Tools: ${esc(D.fachstand)}.</p>`;
+}
+function render(){ renderMain(); renderResult(); save(); }
+
+/* ---------- Ereignisse ---------- */
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return; const d=b.dataset;
+  if(d.sit){ S.sit=d.sit; const s=SIT[d.sit]; S.bauteil=s.bauteil; render(); return; }
+  if(d.form){ S.form=d.form; render(); return; }
+});
+document.addEventListener("input",e=>{
+  const t=e.target, d=t.dataset;
+  if(d.t){ S[d.t]=t.value; if(d.t==="name"){ renderResult(); save(); } else render(); return; }
+  if(d.s){ S[d.s]=t.value===""?"":+t.value; if(d.s==="s") document.querySelectorAll('[data-s="s"]').forEach(x=>{ if(x!==t) x.value=t.value; }); renderResult(); save(); return; }
+});
+document.addEventListener("change",e=>{
+  const t=e.target, d=t.dataset;
+  if(d.c){ S[d.c]=t.checked; render(); return; }
+  if(d.ausn){ S.ausn=d.ausn; render(); return; }
+  if(d.s && t.type==="number"){ render(); }
+});
+$("#btnPrint").onclick=()=>{ const t=document.title, dt=new Date().toISOString().slice(0,10);
+  const n=(S.name||SIT[S.sit].l).replace(/[^\wÄÖÜäöüéèà -]/g,"").trim().replace(/\s+/g,"_");
+  document.title="Brandschutzcheck_"+n+"_"+dt; window.addEventListener("afterprint",()=>{document.title=t;},{once:true});
+  if(document.activeElement) document.activeElement.blur(); window.print(); };
+$("#btnReset").onclick=()=>{ if(!confirm("Alle Eingaben löschen und neu beginnen?")) return; S=defaults(); render(); window.scrollTo(0,0); };
+document.body.insertAdjacentHTML("afterbegin",`<svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">${DEFS}</svg>`);
+$("#fs").textContent=D.fachstand;
+$("#bsvNote").innerHTML="<b>Stand der Vorschriften:</b> "+esc(D.hinweisBSV);
+render();
+})();
+</script>
+</body>
+</html>
