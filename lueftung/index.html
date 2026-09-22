@@ -6,8 +6,8 @@
 <title>Lüftung & Klima – Projekt-Quickcheck</title>
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
-<link rel="icon" type="image/png" href="../icons/icon-192.png">
-<meta name="theme-color" content="#16202A">
+<link rel="icon" type="image/png" href="../icons/favicon-32.png">
+<meta name="theme-color" content="#383633">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..750&display=swap" rel="stylesheet">
@@ -161,11 +161,49 @@ th{background:var(--panel2);font-weight:650}
 .fznote{margin:0;padding:10px 22px 12px;border-top:1px solid var(--line);font-size:.8rem;color:var(--muted)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 @media (max-width:700px){.frow{grid-template-columns:1fr;gap:4px}.fth{display:none}}
+@page{size:A4 portrait;margin:16mm 15mm 18mm 15mm;
+  @bottom-left{content:"BIM Werk – Projekt-Quickcheck Lüftung & Klima";font:7.5pt Archivo,Helvetica,Arial,sans-serif;color:#666}
+  @bottom-right{content:"Seite " counter(page) " / " counter(pages);font:7.5pt Archivo,Helvetica,Arial,sans-serif;color:#666}}
+.printhead{display:none}
 @media print{
-  body{background:#fff;color:#000}
-  header .toolbar,#wizard,aside,.noprint{display:none!important}
-  .f,.card,.tablewrap{break-inside:avoid;border-color:#999}
-  .grid{display:block}
+  :root:root:root{--bg:#fff;--panel:#fff;--panel2:#F3F5F5;--ink:#1A1A1A;--muted:#555;--line:#BFC6CA;
+    --req:#1D7446;--check:#9A6200;--none:#77828B;--crit:#B3261E;--aul:#3C8B40;--zul:#2360A3;--chip:#E6E9EA}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{background:#fff;font-size:9.5pt;line-height:1.4}
+  header.top,#wizardGrid,.noprint,.home{display:none!important}
+  .wrap{max-width:none;padding:0}
+  #result{padding:0}
+  .printhead{display:flex;justify-content:space-between;align-items:flex-end;gap:10mm;padding-bottom:3mm;margin-bottom:4mm;border-bottom:1.5pt solid #383633}
+  .printhead img{height:15mm;width:auto}
+  .printhead .pt{text-align:right;font-size:9pt;color:#383633}
+  .printhead .pt b{display:block;font-size:13pt;font-stretch:112%;color:#1A1A1A}
+  .card{border:0;border-radius:0}
+  .rhead{padding:0 0 3mm}
+  .rhead h2{display:none}
+  .meta{font-size:8.5pt;gap:1mm 6mm}
+  .legend{grid-template-columns:repeat(5,1fr);gap:3mm;padding:0 0 2mm;font-size:7.5pt}
+  .legend div{font-size:7.5pt}
+  .kind{font-size:7pt;padding:0 1.5mm}
+  .fazit{margin-top:3mm;border:1pt solid var(--line);break-inside:avoid}
+  .fzhead{padding:3mm 4mm 2mm}.fzhead h3{font-size:11.5pt}
+  .frow{grid-template-columns:37mm minmax(0,1fr) minmax(0,1.1fr)!important;gap:4mm;padding:2mm 4mm;font-size:8.5pt;break-inside:avoid}
+  .fth{display:grid!important;font-size:7.5pt}
+  .fznote{padding:2mm 4mm;font-size:7pt}
+  .group{margin-top:5mm}
+  .group>h3{font-size:11pt;margin-bottom:2mm;break-after:avoid}
+  .f{padding:2.5mm 4mm;margin-bottom:2.5mm;break-inside:avoid;border:0;border-left:1.2mm solid var(--none);border-radius:0;background:#F7F8F8}
+  .f.req{border-left-color:var(--req)}.f.check{border-left-color:var(--check)}.f.crit{border-left-color:var(--crit)}
+  .nonelist span,.tablewrap,.fazit,.disclaimer{border-radius:0}
+  .f h4{font-size:9.5pt;margin-bottom:1mm}
+  .f dl{grid-template-columns:27mm minmax(0,1fr)!important;font-size:8.5pt;gap:.8mm 4mm}
+  .f dt{margin-top:0!important}
+  .f dd{max-width:none}
+  .nonelist span{font-size:8pt;padding:1mm 2.5mm}
+  .tablewrap{overflow:visible;border-color:var(--line)}
+  table{min-width:0;font-size:8pt}
+  th,td{padding:1.5mm 2.5mm}
+  tr{break-inside:avoid}
+  .disclaimer{max-width:none;font-size:7.5pt;margin-top:5mm;padding:3mm 4mm;break-inside:avoid}
 }
 @media (prefers-reduced-motion:no-preference){.opt{transition:background .12s,border-color .12s}}
 </style>
@@ -741,7 +779,8 @@ function renderResult(){
     ["req","Erforderlich","Grundlage ist ein Gesetz, eine Norm oder ein angestrebtes Label."],
     ["check","Zu prüfen","Kann erforderlich werden oder ist nur unter Bedingungen vorgeschrieben."],
   ];
-  let h=`<div class="card"><div class="rhead"><h2>Projektbeurteilung Lüftung und Klima</h2>
+  let h=`<div class="printhead"><img src="../assets/logo-dark.png" alt="BIM Werk"><div class="pt"><b>Projektbeurteilung Lüftung und Klima</b>${esc(A.name||"Projekt ohne Bezeichnung")} · ${today}</div></div>
+  <div class="card"><div class="rhead"><h2>Projektbeurteilung Lüftung und Klima</h2>
     <div class="meta"><span>Projekt <b>${esc(A.name||"ohne Bezeichnung")}</b></span><span>Vorhaben <b>${esc(fmtVal(Q.find(q=>q.id==="art"))||"–")}</b></span>
     <span>Kanton <b>${esc(A.kanton||"–")}</b></span><span>Nutzung <b>${esc(nutzLabel(A.nutzung))}</b></span>
     <span>Label <b>${esc(fmtVal(Q.find(q=>q.id==="label"))||"–")}${A.eco==="ja"?" ECO":""}</b></span><span>Beurteilt am <b>${today}</b></span><span>Fachstand des Tools <b>22.09.2026</b></span></div>
@@ -764,7 +803,13 @@ function renderResult(){
     <p class="disclaimer"><b>Diese Projektbeurteilung dient der frühen Projektdefinition und ersetzt weder die Fachplanung noch die projektspezifische Prüfung der geltenden gesetzlichen, kantonalen, normativen und brandschutztechnischen Anforderungen.</b> Fachstand des Tools: 22.09.2026. Norm- und Gesetzesinhalte sind sinngemäss zusammengefasst; massgebend sind die Originaltexte in der jeweils gültigen Fassung sowie die kantonalen und kommunalen Vorschriften am Standort. Aussagen der Kategorie «Erforderlich» gelten unter der Voraussetzung, dass die Angaben zutreffen.</p>`;
   $("#result").innerHTML=h;
   $("#btnEdit").onclick=()=>{showResult=false;step=0;save();render();window.scrollTo(0,0);};
-  $("#btnPrint").onclick=()=>window.print();
+  $("#btnPrint").onclick=()=>{
+    const t=document.title, d=new Date().toISOString().slice(0,10);
+    const n=(A.name||"Projekt").replace(/[^\wÄÖÜäöüéèà -]/g,"").trim().replace(/\s+/g,"_");
+    document.title="Quickcheck_Lueftung_"+n+"_"+d;
+    window.addEventListener("afterprint",()=>{document.title=t;},{once:true});
+    window.print();
+  };
   save();
 }
 

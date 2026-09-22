@@ -7,7 +7,8 @@ Sammlung statischer Web-Tools (HTML/CSS/JavaScript, ohne Server) für GitHub Pag
 ```
 index.html              Startseite mit allen Tools (Kacheln)
 manifest.webmanifest    App-Angaben für «Zum Home-Bildschirm»
-icons/                  App-Symbole
+icons/                  App-Symbole (BIM-Werk-Logo)
+assets/                 Firmenlogo hell/dunkel (dunkel für PDF-Bericht)
 .nojekyll               verhindert die Jekyll-Verarbeitung durch GitHub
 lueftung/index.html     Tool «Lüftungsanforderungen»
 ```
@@ -37,3 +38,11 @@ Hinweis: GitHub Pages ist bei kostenlosen Konten nur für öffentliche Repositor
 
 - Eingaben werden nur im Browser des Nutzers gespeichert (localStorage). Jedes Tool verwendet einen eigenen Speicherschlüssel.
 - Schriften werden von Google Fonts geladen; ohne Internet greift eine Systemschrift.
+
+## PDF-Bericht
+
+Im Resultat «Bericht drucken / als PDF speichern» wählen und im Druckdialog «Als PDF speichern» einstellen. Das Format ist fix auf A4 hochformatig eingestellt, mit Firmenlogo im Kopf und Seitenzahlen in der Fusszeile. Den Dateinamen schlägt das Tool automatisch vor (Quickcheck_Lueftung_Projekt_Datum).
+
+## Logo tauschen
+
+Dateien in `assets/` und `icons/` mit gleichem Namen ersetzen. Auf dem Handy muss die Verknüpfung danach gelöscht und neu angelegt werden, damit das neue Symbol erscheint.
